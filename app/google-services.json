@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "573754151415",
+    "firebase_url": "https://sharemovies-47f99.firebaseio.com",
+    "project_id": "sharemovies-47f99",
+    "storage_bucket": "sharemovies-47f99.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573754151415:android:19f69afbe7676e96c1def2",
+        "android_client_info": {
+          "package_name": "com.SMAPAppProjectGroup13.sharemovies"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "573754151415-jjvhqieuqv805ribc792q95j9sgr4m4k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrvOb4DPIBG1hyhDkOGZ16OQJZ9Xus6MQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "573754151415-jjvhqieuqv805ribc792q95j9sgr4m4k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
