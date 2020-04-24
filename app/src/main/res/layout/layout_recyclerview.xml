@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:padding="15dp"
+    android:id="@+id/mainList">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        app:srcCompat="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/movieText"
+        android:layout_width="196dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/imageView"
+        android:text="Movie"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/ratingTxt"
+        android:layout_width="67dp"
+        android:layout_height="57dp"
+        android:layout_toRightOf="@+id/movieText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="9dp"
+        android:layout_marginRight="5dp"
+        android:text="10"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_toEndOf="@+id/movieText"
+        android:layout_marginStart="9dp"
+        android:layout_marginEnd="5dp" />
+
+    <TextView
+        android:id="@+id/userText"
+        android:layout_width="195dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/movieText"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="8dp"
+        android:layout_toRightOf="@+id/imageView"
+        android:text="added by user"
+        android:textSize="16sp"
+        android:layout_toEndOf="@+id/imageView" />
+
+
+</RelativeLayout>

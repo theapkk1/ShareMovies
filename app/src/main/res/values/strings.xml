@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">ShareMovies</string>
+    <string name="addButton">Add</string>
+    <string name="searchEditText" />
+    <string name="searchHint">search movie here</string>
 </resources>
