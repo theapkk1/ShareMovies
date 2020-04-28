@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,22 +19,32 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GroupListActivity extends AppCompatActivity implements Adapter.OnMovieListener{
 
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    private ListenerRegistration moviesListener;
     private static final String TAG = "GroupListActivity";
     private ShareMoviesService shareMoviesService;
     private ServiceConnection shareMoviesServiceConnection;
     private boolean bound = false;
+    private Movie movie = new Movie();
 
     Button addBtn;
     EditText searchField;
     RecyclerView movieListView;
     Adapter adapter;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,25 +59,27 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         adapter = new Adapter(this, this); // Indsæt parameter!
         movieListView.setLayoutManager(new LinearLayoutManager(this));
 
-        /*
+
         //Firestore sættes op
+        Map<String, Object> newmovie = new HashMap<>();
+        newmovie.put("key",movie);
+        //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
         firestore.collection("movies").add(movie).addOnSuccessListener(
                 new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-
+                        Log.d(TAG, "Added " + documentReference.getId());
                     }
                 }
         )
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
+                        Log.d(TAG, e.getMessage());
                     }
-                })
-                
-         */
+                });
     }
+
 
     private void startShareMoviesService() {
         // start service
@@ -78,7 +91,6 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     public void onStart(){
         super.onStart();
         Log.d(TAG, "onStart: ");
-
         // her should the broadcast receiver be registered
     }
 
@@ -88,6 +100,25 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         Log.d(TAG, "onResume: ");
         setupConnectionToShareMoviesService();
         bindToShareMoviewService();
+        bindToFireStore();
+    }
+
+    private void bindToFireStore() {
+        moviesListener = firestore.collection("movies").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                //Hvis listen ikke er tom
+                if(queryDocumentSnapshots != null && !queryDocumentSnapshots.getDocuments().isEmpty())
+                {
+                    //loop over hver movie i listen
+                    List<Movie> movies = new ArrayList<>();
+                    for(DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments())
+                    {
+                        movies.add((Movie) snapshot.getData().get("key"));
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -95,6 +126,8 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         super.onPause();
         Log.d(TAG, "onPause: ");
         unbindShareMoviesService();
+        //stop listening for changes in the firestore
+        moviesListener.remove();
     }
 
     @Override
