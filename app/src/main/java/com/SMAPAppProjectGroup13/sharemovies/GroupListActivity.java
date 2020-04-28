@@ -10,12 +10,19 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class GroupListActivity extends AppCompatActivity implements Adapter.OnMovieListener{
 
+    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private static final String TAG = "GroupListActivity";
     private ShareMoviesService shareMoviesService;
     private ServiceConnection shareMoviesServiceConnection;
@@ -41,6 +48,24 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         adapter = new Adapter(this, this); // Indsæt parameter!
         movieListView.setLayoutManager(new LinearLayoutManager(this));
 
+        /*
+        //Firestore sættes op
+        firestore.collection("movies").add(movie).addOnSuccessListener(
+                new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+
+                    }
+                }
+        )
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                })
+                
+         */
     }
 
     private void startShareMoviesService() {
