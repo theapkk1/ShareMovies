@@ -32,10 +32,8 @@ public class ShareMoviesService extends Service {
 
     private List<Movie> movieList = new ArrayList<>();
 
-    public class ShareMoviesServiceBinder extends Binder {
-        ShareMoviesService getService() {
-            return ShareMoviesService.this;
-        }
+    public class ShareMoviesServiceBinder extends Binder{
+        ShareMoviesService getService(){return ShareMoviesService.this;}
     }
 
     public ShareMoviesService() {
@@ -43,7 +41,7 @@ public class ShareMoviesService extends Service {
     }
 
     @Override
-    public void onCreate() {
+    public void onCreate(){
         super.onCreate();
         Log.d(TAG, "onCreate: ");
     }
@@ -53,7 +51,9 @@ public class ShareMoviesService extends Service {
         if (!started && intent != null) {
             Log.d(TAG, "onStartCommand: called");
             started = true;
-        } else {
+        }
+        else
+        {
             Log.d(TAG, "onStartCommand: already started");
         }
         return START_STICKY;
@@ -63,9 +63,10 @@ public class ShareMoviesService extends Service {
     @Override
     public void onDestroy() {
         started = false;
-        Log.d(TAG, "Background service destroyed");
+        Log.d(TAG,"Background service destroyed");
         super.onDestroy();
     }
+
 
 
     @Override

@@ -10,12 +10,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
 
     private Context _context;
     private OnMovieListener _onMovieListener;
@@ -27,6 +29,11 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         _onMovieListener = onMovieListener;
         _movieList = movieList;
     }
+    public void setMovies(List<Movie> movies)
+    {
+        this._movieList = movies;
+        notifyDataSetChanged();
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -36,17 +43,21 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         movie = _movieList.get(position);
-        //holder.movieTitle.setText(movie.getTitle());
+        holder.movieTitle.setText(movie.getTitle());
+        holder.rating.setText(movie.getPersonalRate());
+        // holder.user.setText(movie.get);
 
-
+        String url = movie.getImage();
+        Picasso.with(holder.image.getContext()).load(url).into(holder.image);
     }
 
     @Override
     public int getItemCount() {
         return _movieList.size();
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -58,6 +69,7 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         public ViewHolder(@NonNull View itemView, OnMovieListener onMovieListener) {
             super(itemView);
+
             image = itemView.findViewById(R.id.imageView);
             movieTitle = itemView.findViewById(R.id.movieText);
             rating = itemView.findViewById(R.id.ratingTxt);
@@ -76,5 +88,4 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public interface OnMovieListener {
         void onMovieClick(int position);
     }
-
 }
