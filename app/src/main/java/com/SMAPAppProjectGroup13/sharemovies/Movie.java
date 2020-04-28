@@ -8,6 +8,11 @@ public class Movie {
     private String note;
     private String image;
 
+    public Movie()
+    {
+
+    }
+
     public Movie(String title, String genre, String description, String imdbRate, String personalRate, String note, String image) {
         this.title = title;
         this.genre = genre;

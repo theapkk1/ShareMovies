@@ -108,6 +108,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     }
 
     private void bindToFireStore() {
+        //snapshot trigger hver kan noget ændrer sig i collection
         moviesListener = firestore.collection("movies").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -115,11 +116,12 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 if(queryDocumentSnapshots != null && !queryDocumentSnapshots.getDocuments().isEmpty())
                 {
                     //loop over hver movie i listen
-                    List<Movie> movies = new ArrayList<>();
+                    //List<Movie> movies = new ArrayList<>();
                     for(DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments())
                     {
-                        movies.add((Movie) snapshot.getData().get("key"));
+                        movieList.add((Movie) snapshot.getData().get("key"));
                     }
+                    adapter.setMovies(movieList);
                 }
             }
         });
