@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ShareMovies</string>
+    <string name="addButton">Tilføj</string>
+    <string name="searchHint">Søg efter film her</string>
+    <string name="log_in">Log ind</string>
+    <string name="if_you_are_not_yet_registered_dont_worry_you_can_just_do_that_also">Hvis du ikke er registreret endnu, kan du også gøre dette!</string>
+    <string name="welcome_to_sharemovies">Velkommen til ShareMovies!</string>
+    <string name="please_log_into_your_account_to_see_your_shared_movielist_below">Log ind på din konto for at se din delte filmliste!</string>
+    <string name="log_in_register">Log ind/registrer</string>
+    <string name="share">Del</string>
+    <string name="comment">Kommentarer</string>
+    <string name="delete">Slet</string>
+    <string name="back">Tilbage</string>
+    <string name="movie_name">Film titel</string>
+    <string name="your_rating">Din rating</string>
+    <string name="description">Beskrivelse</string>
+</resources>

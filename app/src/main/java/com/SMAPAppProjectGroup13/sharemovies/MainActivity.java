@@ -140,11 +140,12 @@ public class MainActivity extends AppCompatActivity {
             {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Log.d(LOG, user.getUid());
-                ((TextView)findViewById(R.id.userText)).setText(user.getUid());
+                ((TextView)findViewById(R.id.userId)).setText(user.getUid());
 
                 //Når brugeren er logget ind vises den fælles liste
-                //Intent intent = new Intent(MainActivity.this, GroupListActivity.class);
-                //startActivity(intent);
+                finish();
+                Intent intent = new Intent(MainActivity.this, GroupListActivity.class);
+                startActivity(intent);
             } else
             {
                 Log.d(LOG, response.getError().getMessage());

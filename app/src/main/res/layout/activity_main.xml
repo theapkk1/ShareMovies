@@ -20,8 +20,8 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="229dp"
-        android:layout_height="99dp"
+        android:layout_width="256dp"
+        android:layout_height="97dp"
         android:text="@string/welcome_to_sharemovies"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
         android:textSize="36sp"
@@ -36,7 +36,7 @@
         android:id="@+id/textView2"
         android:layout_width="339dp"
         android:layout_height="57dp"
-        android:text="@string/please_log_into_your_account_below_to_see_your_shared_movielist"
+        android:text="@string/please_log_into_your_account_to_see_your_shared_movielist_below"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -69,5 +69,16 @@
         app:layout_constraintVertical_bias="0.294"
         app:srcCompat="@drawable/ic_launcher_background"
         android:contentDescription="@string/todo" />
+
+    <TextView
+        android:id="@+id/userId"
+        android:layout_width="80dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.898" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
