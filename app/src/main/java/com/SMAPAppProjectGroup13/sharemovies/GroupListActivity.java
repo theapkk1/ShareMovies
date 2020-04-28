@@ -20,6 +20,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GroupListActivity extends AppCompatActivity implements Adapter.OnMovieListener{
 
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -27,13 +30,12 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     private ShareMoviesService shareMoviesService;
     private ServiceConnection shareMoviesServiceConnection;
     private boolean bound = false;
+    private List<Movie> movieList = new ArrayList<>();
 
     Button addBtn;
     EditText searchField;
     RecyclerView movieListView;
     Adapter adapter;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +47,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         addBtn = findViewById(R.id.addButton);
         searchField = findViewById(R.id.editText);
         movieListView = findViewById(R.id.recyclerView);
-        adapter = new Adapter(this, this); // Indsæt parameter!
+        adapter = new Adapter(this, movieList,this); // Indsæt parameter!
         movieListView.setLayoutManager(new LinearLayoutManager(this));
 
         /*
