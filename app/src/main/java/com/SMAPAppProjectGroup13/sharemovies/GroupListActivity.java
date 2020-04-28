@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,10 +36,11 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupListActivity extends AppCompatActivity implements Adapter.OnMovieListener{
+public class GroupListActivity extends AppCompatActivity implements Adapter.OnMovieListener {
 
 
     private static final String TAG = "GroupListActivity";
+    public static final int REQUEST_CODE_DETAILSACTIVITY = 101;
     private ShareMoviesService shareMoviesService;
     private ServiceConnection shareMoviesServiceConnection;
     private boolean bound = false;
@@ -66,6 +68,12 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final String newMovie = searchField.getText().toString();
+                if (newMovie == null || newMovie.equals("")) {
+                    Toast.makeText(GroupListActivity.this, "Please enter a movie", Toast.LENGTH_SHORT).show();
+                } else
+                    shareMoviesService.addMovie(newMovie);
+                searchField.setText(""); // Clear search view after search
 
             }
         });
@@ -80,7 +88,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         Log.d(TAG, "onStart: ");
 
@@ -88,7 +96,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: ");
         setupConnectionToShareMoviesService();
@@ -99,7 +107,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
 
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause: ");
         unbindShareMoviesService();
@@ -107,7 +115,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     }
 
     @Override
-    public void onStop(){
+    public void onStop() {
         super.onStop();
         Log.d(TAG, "onStop: ");
 
@@ -116,7 +124,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     }
 
     private void unbindShareMoviesService() {
-        if (bound){
+        if (bound) {
             unbindService(shareMoviesServiceConnection);
             bound = false;
         }
@@ -132,17 +140,17 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     }
 
 
-
     private void setupConnectionToShareMoviesService() {
-        shareMoviesServiceConnection = new ServiceConnection(){
+        shareMoviesServiceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                shareMoviesService = ((ShareMoviesService.ShareMoviesServiceBinder)service).getService();
+                shareMoviesService = ((ShareMoviesService.ShareMoviesServiceBinder) service).getService();
                 Log.d(TAG, "onServiceConnected: ");
 
                 // update list here
 
             }
+
             @Override
             public void onServiceDisconnected(ComponentName name) {
                 bound = false;
@@ -153,6 +161,9 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
 
     @Override
     public void onMovieClick(int position) {
+        Intent intentDetailsActivity = new Intent(this, DetailsActivity.class);
+        intentDetailsActivity.putExtra("position", position);
+        startActivityForResult(intentDetailsActivity, REQUEST_CODE_DETAILSACTIVITY);
 
     }
 }
