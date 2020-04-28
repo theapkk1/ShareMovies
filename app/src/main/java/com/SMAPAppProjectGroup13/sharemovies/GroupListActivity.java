@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -50,6 +51,12 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         adapter = new Adapter(this, movieList,this); // Indsæt parameter!
         movieListView.setLayoutManager(new LinearLayoutManager(this));
 
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         /*
         //Firestore sættes op
         firestore.collection("movies").add(movie).addOnSuccessListener(
