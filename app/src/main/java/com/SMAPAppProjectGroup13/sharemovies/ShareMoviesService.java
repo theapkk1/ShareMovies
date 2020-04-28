@@ -2,9 +2,11 @@ package com.SMAPAppProjectGroup13.sharemovies;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -75,13 +77,31 @@ public class ShareMoviesService extends Service {
         return binder;
     }
 
+    public void addMovie(String movie){
+        try {
+            sendRequest(movie);
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(this,"Invalid search!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void sendRequest(final String movie) {
         if (mRequestqueue == null) {
             mRequestqueue = Volley.newRequestQueue(this);
         }
 
-        final String url = "http://www.omdbapi.com/";
-        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .authority("www.omdbapi.com")
+                .appendPath("")
+                .appendQueryParameter("t", movie)
+                .appendQueryParameter("apikey", "6ac79944");
+                String url = builder.build().toString();
+                Log.d(TAG,"URL builed: " + url);
+
+                StringRequest request = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, response);
