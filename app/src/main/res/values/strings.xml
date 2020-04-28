@@ -10,4 +10,12 @@
     <string name="log_in_register">Log in/register</string>
     <string name="please_log_into_your_account_below_to_see_your_shared_movielist">Please log into your account below to see your shared movielist!</string>
     <string name="todo">TODO</string>
+    <string name="share">Share</string>
+    <string name="back">Back</string>
+    <string name="description">Description</string>
+    <string name="delete">Delete</string>
+    <string name="genre">Genre:</string>
+    <string name="imdb">IMDB:</string>
+    <string name="your_rating">Your rating:</string>
+    <string name="comment">Comment</string>
 </resources>

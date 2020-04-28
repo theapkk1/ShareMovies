@@ -2,9 +2,14 @@ package com.SMAPAppProjectGroup13.sharemovies;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +24,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
+    private ShareMoviesService shareMoviesService;
+    private ServiceConnection shareMoviesServiceConnection;
+    private boolean bound = false;
 
     private static final int REQUESTCODE_SIGN_IN = 1000;
     private static final String LOG = MainActivity.class.getSimpleName();
@@ -39,7 +49,83 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(),REQUESTCODE_SIGN_IN);
             }
         });
+
+        startShareMoviesService(); // is used to bind user to the grouplist
     }
+
+    private void startShareMoviesService() {
+        // start service
+        Intent shareMoviesServiceIntent = new Intent(MainActivity.this, ShareMoviesService.class);
+        startService(shareMoviesServiceIntent);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+
+        // her should the broadcast receiver be registered
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d(TAG, "onResume: ");
+        setupConnectionToShareMoviesService();
+        bindToShareMoviewService();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.d(TAG, "onPause: ");
+        unbindShareMoviesService();
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.d(TAG, "onStop: ");
+
+        // unregister receivers
+
+    }
+
+    private void unbindShareMoviesService() {
+        if (bound){
+            unbindService(shareMoviesServiceConnection);
+            bound = false;
+        }
+    }
+
+
+    private void bindToShareMoviewService() {
+        bindService(new Intent(MainActivity.this, ShareMoviesService.class),
+                shareMoviesServiceConnection, Context.BIND_AUTO_CREATE);
+
+        bound = true;
+        Log.d(TAG, "bindToShareMoviewService: called");
+    }
+
+
+
+    private void setupConnectionToShareMoviesService() {
+        shareMoviesServiceConnection = new ServiceConnection(){
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                shareMoviesService = ((ShareMoviesService.ShareMoviesServiceBinder)service).getService();
+                Log.d(TAG, "onServiceConnected: ");
+
+                // update list here
+
+            }
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                bound = false;
+                Log.d(TAG, "onServiceDisconnected: service disconneccted");
+            }
+        };
+    }
+
 
     //tjekker om vi får requestCode tilbage
     @Override

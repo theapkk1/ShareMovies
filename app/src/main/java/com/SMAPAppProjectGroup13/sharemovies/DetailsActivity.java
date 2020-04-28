@@ -2,13 +2,24 @@ package com.SMAPAppProjectGroup13.sharemovies;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DetailsActivity extends AppCompatActivity {
+
+    private static final String TAG = "DetailsActivity";
+    private ShareMoviesService shareMoviesService;
+    private ServiceConnection shareMoviesServiceConnection;
+    private boolean bound = false;
 
     private Button b_Share;
     private Button b_Delete;
@@ -25,6 +36,8 @@ public class DetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
+        setupConnectionToShareMoviesService();
 
         b_Back = findViewById(R.id.b_back);
         b_Delete = findViewById(R.id.b_delete);
@@ -50,5 +63,43 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+        Intent intent = new Intent(DetailsActivity.this, ShareMoviesService.class);
+        bindService(intent, shareMoviesServiceConnection, Context.BIND_AUTO_CREATE);
+        Log.d(TAG, "onStart: bound to service");
+
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        if (bound){
+            unbindService(shareMoviesServiceConnection);
+            bound = false;
+        }
+        Log.d(TAG, "onStop: ");
+    }
+
+    private void setupConnectionToShareMoviesService() {
+        shareMoviesServiceConnection = new ServiceConnection(){
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                shareMoviesService = ((ShareMoviesService.ShareMoviesServiceBinder)service).getService();
+                Log.d(TAG, "onServiceConnected: ");
+
+                // update list here
+
+            }
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                bound = false;
+                Log.d(TAG, "onServiceDisconnected: service disconneccted");
+            }
+        };
     }
 }
