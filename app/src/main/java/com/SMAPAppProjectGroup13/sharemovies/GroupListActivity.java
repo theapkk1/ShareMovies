@@ -43,7 +43,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     private ServiceConnection shareMoviesServiceConnection;
     private boolean bound = false;
     private List<Movie> movieList = new ArrayList<>();
-    private Movie movie = new Movie();
+    private Movie movie;
 
     Button addBtn;
     EditText searchField;
@@ -63,10 +63,24 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         adapter = new Adapter(this, movieList,this); // Indsæt parameter!
         movieListView.setLayoutManager(new LinearLayoutManager(this));
 
+        //testfilm tilføjes til listen
+        //movie = new Movie("Test","Romance","Sjålålå","4.0","3.0","Testing","https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/d0e1bd5e-a7b8-439d-9a61-97710f16313d/dd6p462-b6c9bc68-3089-423d-882d-04e7def5372b.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2QwZTFiZDVlLWE3YjgtNDM5ZC05YTYxLTk3NzEwZjE2MzEzZFwvZGQ2cDQ2Mi1iNmM5YmM2OC0zMDg5LTQyM2QtODgyZC0wNGU3ZGVmNTM3MmIucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.MzlQdoFpCZzTFJNw_iivlijxvsBlfXrXWO7yKZzeXIQ");
+        //movieList.add(movie);
 
         //Firestore sættes op
-        Map<String, Object> newmovie = new HashMap<>();
-        newmovie.put("key",movie);
+        /*
+        Map<List<Movie>, Object> newmovie = new HashMap<>();
+        newmovie.put(movieList,movie);
+         */
+        Map<String, Object> movie = new HashMap<>();
+        movie.put("title","TITEL");
+        movie.put("genre","GENRE");
+        movie.put("description","D");
+        movie.put("imdbRate","4.0");
+        movie.put("personalRate","3.0");
+        movie.put("note","NOTE");
+        movie.put("image","");
+
         //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
         firestore.collection("movies").add(movie).addOnSuccessListener(
                 new OnSuccessListener<DocumentReference>() {
@@ -119,7 +133,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                     //List<Movie> movies = new ArrayList<>();
                     for(DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments())
                     {
-                        movieList.add((Movie) snapshot.getData().get("key"));
+                        movieList.add((Movie) snapshot.getData().get(movieList));
                     }
                     adapter.setMovies(movieList);
                 }

@@ -1,10 +1,13 @@
 package com.SMAPAppProjectGroup13.sharemovies;
 
+import android.app.Application;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
+import java.util.List;
 
 public class ShareMoviesService extends Service {
 
@@ -26,6 +29,9 @@ public class ShareMoviesService extends Service {
     public void onCreate(){
         super.onCreate();
         Log.d(TAG, "onCreate: ");
+
+
+
     }
 
     @Override
