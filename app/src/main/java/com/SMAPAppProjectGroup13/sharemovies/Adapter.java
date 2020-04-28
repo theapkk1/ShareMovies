@@ -13,15 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private Context _context;
     private OnMovieListener _onMovieListener;
+    private List<Movie> _movieList;
+    private Movie movie;
 
-    public Adapter(Context context, OnMovieListener onMovieListener){
+    public Adapter(Context context, List<Movie> movieList, OnMovieListener onMovieListener){
         _context = context;
         _onMovieListener = onMovieListener;
+        _movieList = movieList;
     }
 
     @Override
@@ -32,19 +36,22 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+        movie = _movieList.get(position);
+        //holder.movieTitle.setText(movie.getTitle());
+
 
     }
 
     @Override
     public int getItemCount() {
-        return 0; // returner størrelse på liste
+        return _movieList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         ImageView image;
-        TextView movie;
+        TextView movieTitle;
         TextView rating;
         TextView user;
         OnMovieListener onMovieListener;
@@ -52,7 +59,7 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         public ViewHolder(@NonNull View itemView, OnMovieListener onMovieListener) {
             super(itemView);
             image = itemView.findViewById(R.id.imageView);
-            movie = itemView.findViewById(R.id.movieText);
+            movieTitle = itemView.findViewById(R.id.movieText);
             rating = itemView.findViewById(R.id.ratingTxt);
             user = itemView.findViewById(R.id.userText);
             this.onMovieListener = onMovieListener;
