@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">ShareMovies</string>
+    <string name="addButton">Add</string>
+    <string name="searchEditText" />
+    <string name="searchHint">search movie here</string>
+    <string name="log_in">Log In</string>
+    <string name="if_you_are_not_yet_registered_dont_worry_you_can_just_do_that_also">If you are not yet registered dont worry, you can just do that also!</string>
+    <string name="welcome_to_sharemovies">Welcome to ShareMovies!</string>
+    <string name="please_log_into_your_account_to_see_your_shared_movielist_below">Please log into your account to see your shared movielist below!</string>
+    <string name="log_in_register">Log in/register</string>
+    <string name="please_log_into_your_account_below_to_see_your_shared_movielist">Please log into your account below to see your shared movielist!</string>
+    <string name="todo">TODO</string>
 </resources>
