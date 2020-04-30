@@ -118,9 +118,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     public void onStop() {
         super.onStop();
         Log.d(TAG, "onStop: ");
-
         // unregister receivers
-
     }
 
     private void unbindShareMoviesService() {

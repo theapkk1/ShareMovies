@@ -47,7 +47,6 @@ public class ShareMoviesService extends Service {
 
     private boolean runAsForegroundService = true; // to notification
     private RequestQueue mRequestqueue;
-    private Adapter adapter;
 
     private List<Movie> movieList = new ArrayList<>();
 
@@ -63,10 +62,14 @@ public class ShareMoviesService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
         //testfilm tilføjes til listen
-        //movie = new Movie("Test","Romance","Sjålålå","4.0","3.0","Testing","https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/d0e1bd5e-a7b8-439d-9a61-97710f16313d/dd6p462-b6c9bc68-3089-423d-882d-04e7def5372b.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2QwZTFiZDVlLWE3YjgtNDM5ZC05YTYxLTk3NzEwZjE2MzEzZFwvZGQ2cDQ2Mi1iNmM5YmM2OC0zMDg5LTQyM2QtODgyZC0wNGU3ZGVmNTM3MmIucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.MzlQdoFpCZzTFJNw_iivlijxvsBlfXrXWO7yKZzeXIQ");
-        //movieList.add(movie);
-
+        /*
+        movie = new Movie("Test","Romance","Sjålålå","4.0","3.0","Testing","hello");
+        movieList.add(movie);
+        Map<List<Movie>, Object> movie = new HashMap<>();
+        movie.put(movieList,movie);
+         */
         //Firestore sættes op
+
         Map<String, Object> movie = new HashMap<>();
         movie.put("title","TITEL");
         movie.put("genre","GENRE");
@@ -75,11 +78,8 @@ public class ShareMoviesService extends Service {
         movie.put("personalRate","3.0");
         movie.put("note","NOTE");
         movie.put("image","Hello");
-        /*
-        Map<List<Movie>, Object> movie = new HashMap<>();
-        movie.put(movieList,movie);
 
-         */
+
         //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
         firestore.collection("movies").add(movie).addOnSuccessListener(
                 new OnSuccessListener<DocumentReference>() {
@@ -95,7 +95,6 @@ public class ShareMoviesService extends Service {
                         Log.d(TAG, e.getMessage());
                     }
                 });
-
     }
 
     @Override
@@ -126,7 +125,9 @@ public class ShareMoviesService extends Service {
                     {
                         movieList.add((Movie) snapshot.getData().get(movieList));
                     }
-                    adapter.setMovies(movieList);
+                    //send broadcast
+                    //send notifikation når listen ændrer sig
+                    //adapter.setMovies(movieList);
                 }
             }
         });
@@ -139,7 +140,7 @@ public class ShareMoviesService extends Service {
         super.onDestroy();
 
         //stop listening for changes in the firestore
-        moviesListener.remove();
+        //moviesListener.remove();
     }
 
 
