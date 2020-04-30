@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.Request;
@@ -51,7 +52,7 @@ public class ShareMoviesService extends Service {
     private static final String TAG = "ShareMoviesService";
     public static final String BROADCAST_SHAREMOVIES_SERVICE_RESULT = "com.SMAPAppProjectGroup13.sharemovies";
     private static final String CHANNEL_ID = "ShareMoviesChannel";
-    private static final int NOTIFY_ID = 100;
+    private static final int NOTIFY_ID = 101;
     private final IBinder binder = new ShareMoviesServiceBinder();
     private boolean started = false;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -144,9 +145,15 @@ public class ShareMoviesService extends Service {
                     }
                     //send broadcast
                     sendBroadcastResult();
-                    //send notifikation når listen ændrer sig
-                    notification();
 
+                    //send notifikation når listen ændrer sig
+                    Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
+                            .setContentTitle("ShareMovies")
+                            .setSmallIcon(R.drawable.sharemovies)
+                            .setContentText("newmovie" + "was added to your grouplist!")
+                            .build();
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ShareMoviesService.this);
+                    notificationManager.notify(NOTIFY_ID,notification);
                 }
             }
         });
@@ -176,43 +183,6 @@ public class ShareMoviesService extends Service {
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
-    private void notification() {
-        if(notificationExecutorService==null){
-            notificationExecutorService = Executors.newSingleThreadExecutor(); // single background thread
-        }
-        notificationExecutorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Log.d(TAG, "notificationmethod");
-
-                    if (runAsForegroundService) {
-                        Intent n_Intent = new Intent(ShareMoviesService.this, GroupListActivity.class);
-                        PendingIntent p_Intent = PendingIntent.getActivity(ShareMoviesService.this, 0, n_Intent, 0);
-
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                            NotificationChannel n_channel = new NotificationChannel(CHANNEL_ID, "ShareMoviesChannel", NotificationManager.IMPORTANCE_LOW);
-                            NotificationManager n_manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                            n_manager.createNotificationChannel(n_channel);
-                        }
-                        Log.d(TAG,"notification if");
-                        Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
-                                .setContentTitle("ShareMovies")
-                                .setContentText("newmovie" + "was added to your grouplist!")
-                                .setContentIntent(p_Intent)
-                                .setChannelId(CHANNEL_ID)
-                                .build();
-
-                        startForeground(NOTIFY_ID, notification);
-                    }
-                } catch (Exception e) {
-                    {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        });
-    }
 
     public void addMovie(String movie){
         try {
@@ -250,7 +220,8 @@ public class ShareMoviesService extends Service {
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Volley error is " + error);
             }
-        });
+
+        }); mRequestqueue.add(request);
     }
 
     private void parseJSON(String response) {

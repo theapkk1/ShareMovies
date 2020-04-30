@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUESTCODE_SIGN_IN = 1000;
     private static final String LOG = MainActivity.class.getSimpleName();
+   // ImageView im = findViewById(R.id.imageV_Main);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
