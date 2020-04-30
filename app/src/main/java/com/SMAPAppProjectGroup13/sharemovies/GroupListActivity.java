@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -63,6 +65,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         addBtn = findViewById(R.id.addButton);
         searchField = findViewById(R.id.editText);
         movieListView = findViewById(R.id.recyclerView);
+        movieListView.setHasFixedSize(true);
         adapter = new Adapter(this, movieList, this); // Indsæt parameter!
         movieListView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -93,7 +96,10 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         super.onStart();
         Log.d(TAG, "onStart: ");
 
-        // her should the broadcast receiver be registered
+        // here should the broadcast receiver be registered
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ShareMoviesService.BROADCAST_SHAREMOVIES_SERVICE_RESULT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,filter);
     }
 
     @Override
@@ -120,6 +126,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         super.onStop();
         Log.d(TAG, "onStop: ");
         // unregister receivers
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
     private void unbindShareMoviesService() {
@@ -176,6 +183,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     };
 
     private void updatedList() {
+        movieList.addAll(shareMoviesService.getallMovies());
         adapter.updateData(shareMoviesService.getallMovies());
         adapter.notifyDataSetChanged();
     }
