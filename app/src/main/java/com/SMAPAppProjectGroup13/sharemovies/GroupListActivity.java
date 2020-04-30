@@ -1,5 +1,6 @@
 package com.SMAPAppProjectGroup13.sharemovies;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -148,6 +149,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 Log.d(TAG, "onServiceConnected: ");
 
                 // update list here
+                updatedList();
 
             }
 
@@ -165,5 +167,18 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         intentDetailsActivity.putExtra("position", position);
         startActivityForResult(intentDetailsActivity, REQUEST_CODE_DETAILSACTIVITY);
 
+    }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG,"Broadcast received from background service");
+            updatedList();
+        }
+    };
+
+    private void updatedList() {
+        adapter.updateData(shareMoviesService.getallMovies());
+        adapter.notifyDataSetChanged();
     }
 }

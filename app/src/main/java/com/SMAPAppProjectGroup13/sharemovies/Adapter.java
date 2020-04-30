@@ -58,6 +58,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
         return _movieList.size();
     }
 
+    public void updateData(List<Movie> movieList){_movieList = movieList;}
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 

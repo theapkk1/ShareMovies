@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -40,6 +41,7 @@ import java.util.Map;
 public class ShareMoviesService extends Service {
 
     private static final String TAG = "ShareMoviesService";
+    public static final String BROADCAST_SHAREMOVIES_SERVICE_RESULT = "com.SMAPAppProjectGroup13.sharemovies";
     private final IBinder binder = new ShareMoviesServiceBinder();
     private boolean started = false;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -139,7 +141,7 @@ public class ShareMoviesService extends Service {
         super.onDestroy();
 
         //stop listening for changes in the firestore
-        moviesListener.remove();
+        //moviesListener.remove();
     }
 
 
@@ -148,6 +150,13 @@ public class ShareMoviesService extends Service {
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind: called");
         return binder;
+    }
+
+    public void sendBroadcastResult(){
+        Log.d(TAG,"broadcasting");
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(BROADCAST_SHAREMOVIES_SERVICE_RESULT);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
     public void addMovie(String movie){
@@ -203,9 +212,14 @@ public class ShareMoviesService extends Service {
             movieList.add(newMovie);
             // add to database
             // send broadcast result
+            sendBroadcastResult();
 
         } catch (JSONException e) {
             Log.d(TAG,"onResponse: JSON error");
         }
+    }
+
+    public List<Movie> getallMovies(){
+        return movieList;
     }
 }
