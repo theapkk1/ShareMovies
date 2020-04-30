@@ -1,6 +1,11 @@
 package com.SMAPAppProjectGroup13.sharemovies;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Binder;
@@ -10,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.volley.Request;
@@ -37,11 +43,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ShareMoviesService extends Service {
 
     private static final String TAG = "ShareMoviesService";
     public static final String BROADCAST_SHAREMOVIES_SERVICE_RESULT = "com.SMAPAppProjectGroup13.sharemovies";
+    private static final String CHANNEL_ID = "ShareMoviesChannel";
+    private static final int NOTIFY_ID = 100;
     private final IBinder binder = new ShareMoviesServiceBinder();
     private boolean started = false;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -49,6 +59,7 @@ public class ShareMoviesService extends Service {
 
     private boolean runAsForegroundService = true; // to notification
     private RequestQueue mRequestqueue;
+    private ExecutorService notificationExecutorService;
 
     private List<Movie> movieList = new ArrayList<>();
 
@@ -73,6 +84,7 @@ public class ShareMoviesService extends Service {
         //Firestore sættes op
 
         Map<String, Object> movie = new HashMap<>();
+        /*
         movie.put("title","TITEL");
         movie.put("genre","GENRE");
         movie.put("description","D");
@@ -80,6 +92,9 @@ public class ShareMoviesService extends Service {
         movie.put("personalRate","3.0");
         movie.put("note","NOTE");
         movie.put("image","Hello");
+
+         */
+        //movie.put("movie",);
 
 
         //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
@@ -128,12 +143,15 @@ public class ShareMoviesService extends Service {
                         movieList.add((Movie) snapshot.getData().get(movieList));
                     }
                     //send broadcast
+                    sendBroadcastResult();
                     //send notifikation når listen ændrer sig
-                    //adapter.setMovies(movieList);
+                    notification();
+
                 }
             }
         });
     }
+
 
     @Override
     public void onDestroy() {
@@ -144,8 +162,6 @@ public class ShareMoviesService extends Service {
         //stop listening for changes in the firestore
         //moviesListener.remove();
     }
-
-
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -158,6 +174,44 @@ public class ShareMoviesService extends Service {
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(BROADCAST_SHAREMOVIES_SERVICE_RESULT);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+    }
+
+    private void notification() {
+        if(notificationExecutorService==null){
+            notificationExecutorService = Executors.newSingleThreadExecutor(); // single background thread
+        }
+        notificationExecutorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.d(TAG, "notificationmethod");
+
+                    if (runAsForegroundService) {
+                        Intent n_Intent = new Intent(ShareMoviesService.this, GroupListActivity.class);
+                        PendingIntent p_Intent = PendingIntent.getActivity(ShareMoviesService.this, 0, n_Intent, 0);
+
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            NotificationChannel n_channel = new NotificationChannel(CHANNEL_ID, "ShareMoviesChannel", NotificationManager.IMPORTANCE_LOW);
+                            NotificationManager n_manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            n_manager.createNotificationChannel(n_channel);
+                        }
+                        Log.d(TAG,"notification if");
+                        Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
+                                .setContentTitle("ShareMovies")
+                                .setContentText("newmovie" + "was added to your grouplist!")
+                                .setContentIntent(p_Intent)
+                                .setChannelId(CHANNEL_ID)
+                                .build();
+
+                        startForeground(NOTIFY_ID, notification);
+                    }
+                } catch (Exception e) {
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
     }
 
     public void addMovie(String movie){
