@@ -58,9 +58,7 @@ public class ShareMoviesService extends Service {
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private ListenerRegistration moviesListener;
 
-    private boolean runAsForegroundService = true; // to notification
     private RequestQueue mRequestqueue;
-    private ExecutorService notificationExecutorService;
 
     private List<Movie> movieList = new ArrayList<>();
 
@@ -99,20 +97,20 @@ public class ShareMoviesService extends Service {
 
 
         //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
-        firestore.collection("movies").add(movie).addOnSuccessListener(
-                new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "Added " + documentReference.getId());
-                    }
-                }
-        )
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, e.getMessage());
-                    }
-                });
+//        firestore.collection("movies").add(movie).addOnSuccessListener(
+//                new OnSuccessListener<DocumentReference>() {
+//                    @Override
+//                    public void onSuccess(DocumentReference documentReference) {
+//                        Log.d(TAG, "Added " + documentReference.getId());
+//                    }
+//                }
+//        )
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.d(TAG, e.getMessage());
+//                    }
+//                });
     }
 
     @Override
@@ -141,7 +139,7 @@ public class ShareMoviesService extends Service {
                     //List<Movie> movies = new ArrayList<>();
                     for(DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments())
                     {
-                        movieList.add((Movie) snapshot.getData().get(movieList));
+                        movieList.add((Movie) snapshot.toObject(Movie.class));
                     }
                     //send broadcast
                     sendBroadcastResult();

@@ -66,14 +66,15 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         searchField = findViewById(R.id.editText);
         movieListView = findViewById(R.id.recyclerView);
         movieListView.setHasFixedSize(true);
-        adapter = new Adapter(this, movieList, this); // Indsæt parameter!
         movieListView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new Adapter(this, movieList, this); // Indsæt parameter!
+        movieListView.setAdapter(adapter);
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String newMovie = searchField.getText().toString();
-                if (newMovie == null || newMovie.equals("")) {
+                if (newMovie.equals("")) {
                     Toast.makeText(GroupListActivity.this, "Please enter a movie", Toast.LENGTH_SHORT).show();
                 } else
                     shareMoviesService.addMovie(newMovie);
@@ -184,7 +185,17 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
 
     private void updatedList() {
         movieList.addAll(shareMoviesService.getallMovies());
-        adapter.updateData(shareMoviesService.getallMovies());
-        adapter.notifyDataSetChanged();
+        adapter.setMovies(movieList);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_DETAILSACTIVITY) {
+            if (resultCode == RESULT_OK) {
+                //setResult(RESULT_OK, data);
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,7 +44,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         movie = _movieList.get(position);
         holder.movieTitle.setText(movie.getTitle());
         holder.rating.setText(movie.getPersonalRate());
@@ -58,24 +59,24 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
         return _movieList.size();
     }
 
-    public void updateData(List<Movie> movieList){_movieList = movieList;}
-
-
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         ImageView image;
         TextView movieTitle;
         TextView rating;
         TextView user;
+        RelativeLayout mainLayout;
         OnMovieListener onMovieListener;
 
         public ViewHolder(@NonNull View itemView, OnMovieListener onMovieListener) {
             super(itemView);
 
+            // Get widget references
             image = itemView.findViewById(R.id.imageView);
             movieTitle = itemView.findViewById(R.id.movieText);
             rating = itemView.findViewById(R.id.ratingTxt);
             user = itemView.findViewById(R.id.userText);
+            mainLayout = itemView.findViewById(R.id.mainList);
             this.onMovieListener = onMovieListener;
             itemView.setOnClickListener(this);
         }

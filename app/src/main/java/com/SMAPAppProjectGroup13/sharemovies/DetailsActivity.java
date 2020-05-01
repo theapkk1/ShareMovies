@@ -20,16 +20,10 @@ public class DetailsActivity extends AppCompatActivity {
     private ShareMoviesService shareMoviesService;
     private ServiceConnection shareMoviesServiceConnection;
     private boolean bound = false;
+    private int position;
 
-    private Button b_Share;
-    private Button b_Delete;
-    private Button b_Back;
-    private TextView tv_movieName;
-    private TextView tv_genre;
-    private TextView tv_description;
-    private TextView tv_comments;
-    private TextView tv_IMDBrating;
-    private TextView tv_yourRating;
+    private Button b_Share, b_Delete, b_Back;
+    private TextView tv_movieName, tv_genre, tv_description, tv_comments, tv_IMDBrating, tv_yourRating;
     private ImageView image;
 
     @Override
@@ -37,16 +31,28 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        // Get intent from GrouplistActivity
+        Intent shareMoviesIntent = getIntent();
+
         setupConnectionToShareMoviesService();
 
+        // Get widget references
         b_Back = findViewById(R.id.b_back);
         b_Delete = findViewById(R.id.b_delete);
         b_Share = findViewById(R.id.b_share);
+        tv_movieName = findViewById(R.id.TV_nameMovie);
+        tv_genre = findViewById(R.id.TV_genreTitle);
+        tv_description = findViewById(R.id.TV_descriptionTitle);
+        tv_IMDBrating = findViewById(R.id.TV_imdbRateTitle);
+        tv_yourRating = findViewById(R.id.TV_personalRateTitle);
+        tv_comments = findViewById(R.id.TV_commentTitle);
+
+        position = shareMoviesIntent.getIntExtra("position",0);
 
         b_Back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                finish();
             }
         });
         b_Delete.setOnClickListener(new View.OnClickListener() {
@@ -58,8 +64,8 @@ public class DetailsActivity extends AppCompatActivity {
         b_Share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
+                setResult(RESULT_OK);
+                finish();
             }
         });
 
@@ -90,9 +96,9 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 shareMoviesService = ((ShareMoviesService.ShareMoviesServiceBinder)service).getService();
+                bound = true;
                 Log.d(TAG, "onServiceConnected: ");
 
-                // update list here
 
             }
             @Override
@@ -102,4 +108,5 @@ public class DetailsActivity extends AppCompatActivity {
             }
         };
     }
+
 }

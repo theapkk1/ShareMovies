@@ -58,7 +58,7 @@
         app:layout_constraintVertical_bias="0.951" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/imageView"
         android:layout_width="299dp"
         android:layout_height="138dp"
         android:layout_marginTop="32dp"
@@ -72,7 +72,7 @@
         android:contentDescription="@string/todo" />
 
     <TextView
-        android:id="@+id/TV_description"
+        android:id="@+id/TV_descriptionTitle"
         android:layout_width="98dp"
         android:layout_height="25dp"
         android:layout_marginTop="56dp"
@@ -112,7 +112,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.029"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.668" />
 
     <TextView
@@ -143,7 +143,7 @@
         app:layout_constraintVertical_bias="0.577" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/TV_imdbRateTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/imdb"
@@ -171,7 +171,7 @@
         app:layout_constraintVertical_bias="0.203" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/TV_personalRateTitle"
         android:layout_width="99dp"
         android:layout_height="31dp"
         android:text="@string/your_rating"
