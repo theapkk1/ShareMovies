@@ -54,7 +54,6 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     private List<Movie> movieList = new ArrayList<>();
     private Movie movie;
 
-
     Button addBtn;
     EditText searchField;
     RecyclerView movieListView;
@@ -116,8 +115,6 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         bindToShareMoviewService();
 
     }
-
-
 
     @Override
     public void onPause() {
@@ -189,6 +186,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     };
 
     private void updatedList() {
+        movieList.clear();
         movieList.addAll(shareMoviesService.getallMovies());
         adapter.setMovies(movieList);
     }

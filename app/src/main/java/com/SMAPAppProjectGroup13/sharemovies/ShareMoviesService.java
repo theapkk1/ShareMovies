@@ -66,6 +66,8 @@ public class ShareMoviesService extends Service {
 
     private List<Movie> movieList = new ArrayList<>();
 
+
+
     public class ShareMoviesServiceBinder extends Binder{
         ShareMoviesService getService(){return ShareMoviesService.this;}
     }
@@ -177,6 +179,10 @@ public class ShareMoviesService extends Service {
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind: called");
         return binder;
+    }
+
+    public Movie getMovie(int position) {
+        return movieList.get(position);
     }
 
     public void sendBroadcastResult(){
