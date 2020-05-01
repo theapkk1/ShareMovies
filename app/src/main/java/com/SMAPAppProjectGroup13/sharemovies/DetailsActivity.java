@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -25,6 +26,10 @@ public class DetailsActivity extends AppCompatActivity {
     private Button b_Share, b_Delete, b_Back;
     private TextView tv_movieName, tv_genre, tv_description, tv_comments, tv_IMDBrating, tv_yourRating;
     private ImageView image;
+    private SeekBar seekBar_rate;
+
+    // Values for seekbar
+    int min = 0, max=100, current = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +51,29 @@ public class DetailsActivity extends AppCompatActivity {
         tv_IMDBrating = findViewById(R.id.TV_imdbRateTitle);
         tv_yourRating = findViewById(R.id.TV_personalRateTitle);
         tv_comments = findViewById(R.id.TV_commentTitle);
+        seekBar_rate = findViewById(R.id.seekBar);
 
         position = shareMoviesIntent.getIntExtra("position",0);
+
+        // SeekBar for personal rating
+        seekBar_rate.setMax(max);
+        seekBar_rate.setProgress(current);
+        tv_yourRating.setText(""+current);
+
+        seekBar_rate.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                current = progress;
+                tv_yourRating.setText("" + (double)current/10);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
 
         b_Back.setOnClickListener(new View.OnClickListener() {
             @Override
