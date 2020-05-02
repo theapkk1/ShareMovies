@@ -27,6 +27,7 @@ public class DetailsActivity extends AppCompatActivity {
     private boolean bound = false;
     private int position;
     private String note;
+    private String rate_value;
     Movie movie;
 
     private Button b_Share, b_Delete, b_Back;
@@ -65,6 +66,7 @@ public class DetailsActivity extends AppCompatActivity {
         tv_commentsTitle = findViewById(R.id.TV_commentTitle);
         tv_note = findViewById(R.id.editText);
         image = findViewById(R.id.imageView);
+        seekBar_rate = findViewById(R.id.seekBar);
 
         position = shareMoviesIntent.getIntExtra("position",0);
 
@@ -91,6 +93,7 @@ public class DetailsActivity extends AppCompatActivity {
         b_Back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // save values
                 finish();
             }
         });
@@ -105,7 +108,8 @@ public class DetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 note = tv_note.getText().toString();
                 movie.setNote(note);
-                // set rating
+                rate_value = tv_yourRating.getText().toString();
+                movie.setPersonalRate(rate_value);// set rating
                 // updatere liste
                 setResult(RESULT_OK);
                 finish();
