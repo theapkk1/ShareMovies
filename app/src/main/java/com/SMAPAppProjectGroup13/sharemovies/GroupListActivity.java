@@ -55,6 +55,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     private Movie movie;
 
     Button addBtn;
+    Button signOutBtn;
     EditText searchField;
     RecyclerView movieListView;
     Adapter adapter;
@@ -67,6 +68,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         startShareMoviesService(); // is used to bind user to the grouplist
 
         addBtn = findViewById(R.id.addButton);
+        signOutBtn = findViewById(R.id.BtnLogOut);
         searchField = findViewById(R.id.editText);
         movieListView = findViewById(R.id.recyclerView);
         movieListView.setHasFixedSize(true);
@@ -87,7 +89,15 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
             }
         });
 
-
+        signOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                finish();
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void startShareMoviesService() {
