@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/userId"
+        android:layout_width="80dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.869"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.911" />
+
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
@@ -34,7 +45,7 @@
         app:layout_constraintVertical_bias="0.051" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/TV_genreTitle"
         android:layout_width="339dp"
         android:layout_height="57dp"
         android:text="@string/please_log_into_your_account_to_see_your_shared_movielist_below"

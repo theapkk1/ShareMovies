@@ -15,4 +15,5 @@
     <string name="movie_name">Film titel</string>
     <string name="your_rating">Din rating</string>
     <string name="description">Beskrivelse</string>
+    <string name="BtnLogOut">Log ud</string>
 </resources>

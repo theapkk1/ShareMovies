@@ -34,7 +34,7 @@
         app:layout_constraintVertical_bias="0.071" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/TV_genreTitle"
         android:layout_width="339dp"
         android:layout_height="57dp"
         android:text="@string/please_log_into_your_account_to_see_your_shared_movielist_below"

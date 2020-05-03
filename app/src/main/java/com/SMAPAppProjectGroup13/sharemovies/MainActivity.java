@@ -57,81 +57,75 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        startShareMoviesService(); // is used to bind user to the grouplist
+//        startShareMoviesService(); // is used to bind user to the grouplist
     }
 
-    private void startShareMoviesService() {
-        // start service
-        Intent shareMoviesServiceIntent = new Intent(MainActivity.this, ShareMoviesService.class);
-        startService(shareMoviesServiceIntent);
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
-        Log.d(TAG, "onStart: ");
-
-        // her should the broadcast receiver be registered
-    }
-    @Override
-    public void onResume(){
-        super.onResume();
-        Log.d(TAG, "onResume: ");
-        setupConnectionToShareMoviesService();
-        bindToShareMoviewService();
-    }
-
-    @Override
-    public void onPause(){
-        super.onPause();
-        Log.d(TAG, "onPause: ");
-        unbindShareMoviesService();
-    }
-
-    @Override
-    public void onStop(){
-        super.onStop();
-        Log.d(TAG, "onStop: ");
-
-        // unregister receivers
-
-    }
-
-    private void unbindShareMoviesService() {
-        if (bound){
-            unbindService(shareMoviesServiceConnection);
-            bound = false;
-        }
-    }
-
-
-    private void bindToShareMoviewService() {
-        bindService(new Intent(MainActivity.this, ShareMoviesService.class),
-                shareMoviesServiceConnection, Context.BIND_AUTO_CREATE);
-
-        bound = true;
-        Log.d(TAG, "bindToShareMoviewService: called");
-    }
-
-
-
-    private void setupConnectionToShareMoviesService() {
-        shareMoviesServiceConnection = new ServiceConnection(){
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                shareMoviesService = ((ShareMoviesService.ShareMoviesServiceBinder)service).getService();
-                Log.d(TAG, "onServiceConnected: ");
-
-                // update list here
-
-            }
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                bound = false;
-                Log.d(TAG, "onServiceDisconnected: service disconneccted");
-            }
-        };
-    }
+//    private void startShareMoviesService() {
+//        // start service
+//        Intent shareMoviesServiceIntent = new Intent(MainActivity.this, ShareMoviesService.class);
+//        startService(shareMoviesServiceIntent);
+//    }
+//
+//    @Override
+//    public void onStart(){
+//        super.onStart();
+//        Log.d(TAG, "onStart: ");
+//    }
+//    @Override
+//    public void onResume(){
+//        super.onResume();
+//        Log.d(TAG, "onResume: ");
+//        setupConnectionToShareMoviesService();
+//        bindToShareMoviewService();
+//    }
+//
+//    @Override
+//    public void onPause(){
+//        super.onPause();
+//        Log.d(TAG, "onPause: ");
+//        unbindShareMoviesService();
+//    }
+//
+//    @Override
+//    public void onStop(){
+//        super.onStop();
+//        Log.d(TAG, "onStop: ");
+//
+//    }
+//
+//    private void unbindShareMoviesService() {
+//        if (bound){
+//            unbindService(shareMoviesServiceConnection);
+//            bound = false;
+//        }
+//    }
+//
+//
+//    private void bindToShareMoviewService() {
+//        bindService(new Intent(MainActivity.this, ShareMoviesService.class),
+//                shareMoviesServiceConnection, Context.BIND_AUTO_CREATE);
+//
+//        bound = true;
+//        Log.d(TAG, "bindToShareMoviewService: called");
+//    }
+//
+//
+//
+//    private void setupConnectionToShareMoviesService() {
+//        shareMoviesServiceConnection = new ServiceConnection(){
+//            @Override
+//            public void onServiceConnected(ComponentName name, IBinder service) {
+//                shareMoviesService = ((ShareMoviesService.ShareMoviesServiceBinder)service).getService();
+//                Log.d(TAG, "onServiceConnected: ");
+//
+//            }
+//            @Override
+//            public void onServiceDisconnected(ComponentName name) {
+//                bound = false;
+//                Log.d(TAG, "onServiceDisconnected: service disconneccted");
+//            }
+//        };
+//    }
 
 
     //tjekker om vi får requestCode tilbage

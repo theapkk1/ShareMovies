@@ -20,4 +20,5 @@
     <string name="romantic" translatable="false">Romantic</string>
     <string name="todo" translatable="false">TODO</string>
     <string name="email">Email</string>
+    <string name="BtnLogOut">Sign out</string>
 </resources>

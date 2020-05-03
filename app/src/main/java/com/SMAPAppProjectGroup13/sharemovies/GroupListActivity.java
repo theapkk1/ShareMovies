@@ -94,6 +94,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 finish();
+                Toast.makeText(GroupListActivity.this, "Signing out...", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(intent);
             }
