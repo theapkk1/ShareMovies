@@ -62,6 +62,7 @@ public class ShareMoviesService extends Service {
     private boolean started = false;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private ListenerRegistration moviesListener;
+    private User user;
 
     private RequestQueue mRequestqueue;
 
@@ -100,7 +101,7 @@ public class ShareMoviesService extends Service {
     }
     private void bindToFireStore() {
         //snapshot trigger hver kan noget ændrer sig i collection
-        moviesListener = firestore.collection("movies").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        moviesListener = firestore.collection("movies").document("group1").collection("movies1").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 //Hvis listen ikke er tom
@@ -108,6 +109,7 @@ public class ShareMoviesService extends Service {
                 {
                     //loop over hver movie i listen
                     //List<Movie> movies = new ArrayList<>();
+                    movieList.clear();
                     for(DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments())
                     {
                         movieList.add((Movie) snapshot.toObject(Movie.class));
@@ -226,10 +228,10 @@ public class ShareMoviesService extends Service {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            movieList.clear();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 movieList.add((Movie) document.toObject(Movie.class));
-
                             }
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -238,7 +240,6 @@ public class ShareMoviesService extends Service {
                 });
         return movieList;
     }
-
 
     public void addMovie(Movie movie)
     {
@@ -259,6 +260,41 @@ public class ShareMoviesService extends Service {
                     }
                 });
 
+    }
+    public void checkUser(final String email)
+    {
+        // kig efter om brugerens email er i listen over users
+        firestore.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        document.toObject(User.class);
+                        String dataEmail = document.getData().toString();
+                        if (email == dataEmail)
+                        {
+                            //hvis brugeren er der skal brugeren gruppeID hentes og gemmes ned
+                             String group = firestore.collection("users").document(email).collection("group").get().toString();
+
+                        }
+                        // hvis brugeren ikke er der skal brugeren gemmes ned som ny bruger i users
+                        // og have tilkoblet en ny gruppe --> evt. et metode kald
+                        createUser(email);
+
+
+                    }
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+
+
+
+    }
+
+    private void createUser(String email) {
     }
 
     public List<Movie> getallMovies(){
