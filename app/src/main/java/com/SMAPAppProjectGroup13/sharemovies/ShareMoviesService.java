@@ -39,6 +39,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONException;
@@ -79,44 +80,8 @@ public class ShareMoviesService extends Service {
     public void onCreate(){
         super.onCreate();
         Log.d(TAG, "onCreate: ");
-        //testfilm tilføjes til listen
-        /*
-        movie = new Movie("Test","Romance","Sjålålå","4.0","3.0","Testing","hello");
-        movieList.add(movie);
-        Map<List<Movie>, Object> movie = new HashMap<>();
-        movie.put(movieList,movie);
-         */
-        //Firestore sættes op
 
-        Map<String, Object> movie = new HashMap<>();
-        /*
-        movie.put("title","TITEL");
-        movie.put("genre","GENRE");
-        movie.put("description","D");
-        movie.put("imdbRate","4.0");
-        movie.put("personalRate","3.0");
-        movie.put("note","NOTE");
-        movie.put("image","Hello");
-
-         */
-        //movie.put("movie",);
-
-
-        //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
-//        firestore.collection("movies").add(movie).addOnSuccessListener(
-//                new OnSuccessListener<DocumentReference>() {
-//                    @Override
-//                    public void onSuccess(DocumentReference documentReference) {
-//                        Log.d(TAG, "Added " + documentReference.getId());
-//                    }
-//                }
-//        )
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.d(TAG, e.getMessage());
-//                    }
-//                });
+        getAllMoviesFromDatabase();
     }
 
     @Override
@@ -162,7 +127,6 @@ public class ShareMoviesService extends Service {
             }
         });
     }
-
 
 
     @Override
@@ -246,12 +210,55 @@ public class ShareMoviesService extends Service {
             Movie newMovie = new Movie(movieTitle,genre,description,imdbRate,"","",imageURL);
             movieList.add(newMovie);
             // add to database
+            addMovie(newMovie);
             // send broadcast result
             sendBroadcastResult();
 
         } catch (JSONException e) {
             Log.d(TAG,"onResponse: JSON error");
         }
+    }
+    public List<Movie> getAllMoviesFromDatabase() {
+        //Inspiration from: https://firebase.google.com/docs/firestore/query-data/get-data#get_all_documents_in_a_collection
+        firestore.collection("movies").document("group1").collection("movies1")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                movieList.add((Movie) document.toObject(Movie.class));
+
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        return movieList;
+    }
+
+
+    public void addMovie(Movie movie)
+    {
+
+        //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
+        firestore.collection("movies").document("group1").collection("movies1").add(movie).addOnSuccessListener(
+                new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "Added " + documentReference.getId());
+                    }
+                }
+        )
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                });
+
     }
 
     public List<Movie> getallMovies(){

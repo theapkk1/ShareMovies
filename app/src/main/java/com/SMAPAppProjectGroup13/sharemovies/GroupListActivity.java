@@ -198,7 +198,8 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
 
     private void updatedList() {
         movieList.clear();
-        movieList.addAll(shareMoviesService.getallMovies());
+        //movieList.addAll(shareMoviesService.getallMovies());
+        movieList = shareMoviesService.getAllMoviesFromDatabase();
         adapter.setMovies(movieList);
     }
 

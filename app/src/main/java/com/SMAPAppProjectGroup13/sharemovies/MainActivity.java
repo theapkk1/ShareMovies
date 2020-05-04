@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ShareMoviesService shareMoviesService;
     private ServiceConnection shareMoviesServiceConnection;
+    private User user_;
     private boolean bound = false;
 
     private static final int REQUESTCODE_SIGN_IN = 1000;
@@ -142,6 +143,13 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Log.d(LOG, user.getUid());
                 ((TextView)findViewById(R.id.userId)).setText(user.getUid());
+
+//                if()
+//                {
+//                    user_ = new User(user.getUid(),)
+//                }
+
+
 
                 //Når brugeren er logget ind vises den fælles liste
                 finish();
