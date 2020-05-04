@@ -2,6 +2,7 @@ package com.SMAPAppProjectGroup13.sharemovies;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -94,6 +95,7 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // save values
+                setResult(Activity.RESULT_CANCELED);
                 finish();
             }
         });
