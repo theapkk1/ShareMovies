@@ -169,6 +169,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
 
                 // update list here
                 updatedList();
+                Log.d(TAG,"Size of movie list: " + movieList.size());
 
             }
 
@@ -198,8 +199,8 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
 
     private void updatedList() {
         movieList.clear();
-        //movieList.addAll(shareMoviesService.getallMovies());
-        movieList = shareMoviesService.getAllMoviesFromDatabase();
+        movieList.addAll(shareMoviesService.getallMovies());
+        //movieList = shareMoviesService.getAllMoviesFromDatabase();
         adapter.setMovies(movieList);
     }
 
