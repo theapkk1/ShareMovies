@@ -38,7 +38,7 @@ public class DetailsActivity extends AppCompatActivity {
     private SeekBar seekBar_rate;
 
     // Values for seekbar
-    int min = 0, max=100, current = 5;
+    int min = 0, max=100, current = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +152,6 @@ public class DetailsActivity extends AppCompatActivity {
                     tv_genre.setText(movie.getGenre());
                     tv_genre.setMovementMethod(new ScrollingMovementMethod());
                     tv_IMDBrating.setText(movie.getImdbRate());
-                    tv_personalRateTitle.setText(movie.getPersonalRate());
                     tv_description.setText(movie.getDescription());
                     tv_description.setMovementMethod(new ScrollingMovementMethod());
                     Glide.with(DetailsActivity.this).load(movie.getImage()).into(image);
