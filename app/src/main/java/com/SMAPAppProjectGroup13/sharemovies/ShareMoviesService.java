@@ -115,7 +115,9 @@ public class ShareMoviesService extends Service {
                     movieList.clear();
                     for(DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments())
                     {
-                        movieList.add((Movie) snapshot.toObject(Movie.class));
+                        Movie movie = snapshot.toObject(Movie.class);
+                        movie.setMovieId(snapshot.getId());
+                        movieList.add(movie);
                     }
                     //send broadcast
                     sendBroadcastResult();
