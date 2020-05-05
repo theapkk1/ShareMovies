@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -57,6 +58,8 @@ public class ShareMoviesService extends Service {
     private static final String TAG = "ShareMoviesService";
     public static final String BROADCAST_SHAREMOVIES_SERVICE_RESULT = "com.SMAPAppProjectGroup13.sharemovies";
     private static final String CHANNEL_ID = "ShareMoviesChannel";
+    private String newMovieID;
+    private String newMovieTitle;
     private static final int NOTIFY_ID = 101;
     private final IBinder binder = new ShareMoviesServiceBinder();
     private boolean started = false;
@@ -115,20 +118,45 @@ public class ShareMoviesService extends Service {
                         movieList.add((Movie) snapshot.toObject(Movie.class));
                     }
                     //send broadcast
-                    sendBroadcastResult();
-
-                    //send notifikation når listen ændrer sig
-                    Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
-                            .setContentTitle("ShareMovies")
-                            .setSmallIcon(R.drawable.sharemovies)
-                            .setContentText("newmovie" + "was added to your grouplist!")
-                            .build();
-                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ShareMoviesService.this);
-                    notificationManager.notify(NOTIFY_ID,notification);
+                    sendBroadcastResult(); 
                 }
+
+                //følgende for løkke løber kun igennem de ændringer der er sket i documenterne
+                for(DocumentChange dc : queryDocumentSnapshots.getDocumentChanges())
+                {
+                   DocumentSnapshot documentSnapshot = dc.getDocument();
+                   String id = documentSnapshot.getId();
+                   //int newIndex = dc.getNewIndex();
+                   //String title = movieList.get(newIndex).getTitle();
+                   switch (dc.getType())
+                   {
+                       case ADDED:
+                           Log.d(TAG, "document added");
+                           //send notifikation med nyeste tilføjede film når listen ændrer sig
+                           Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
+                                   .setContentTitle("ShareMovies")
+                                   .setSmallIcon(R.drawable.sharemovies)
+                                   .setContentText( newMovieTitle + " was added to your grouplist!")
+                                   .build();
+                           NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ShareMoviesService.this);
+                           notificationManager.notify(NOTIFY_ID,notification);
+                   }
+                   }
             }
         });
     }
+
+    /*
+    public String getMovieTitle()
+    {
+        //Tager det sidste element i movieList
+        //String movieTitle = movieList.get(movieList.size()-1).getTitle();
+        //String movieTitle = movieList.get(movieList.).getTitle();
+        String movieTitle = newMovieTitle;
+        return movieTitle;
+    }
+
+     */
 
 
     @Override
@@ -212,7 +240,7 @@ public class ShareMoviesService extends Service {
             Movie newMovie = new Movie(movieTitle,genre,description,imdbRate,"","",imageURL);
             movieList.add(newMovie);
             // add to database
-            addMovie(newMovie);
+            addMovieToDatabase(newMovie);
             // send broadcast result
             sendBroadcastResult();
 
@@ -241,15 +269,17 @@ public class ShareMoviesService extends Service {
         return movieList;
     }
 
-    public void addMovie(Movie movie)
+    public void addMovieToDatabase(final Movie movie)
     {
-
         //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
         firestore.collection("movies").document("group1").collection("movies1").add(movie).addOnSuccessListener(
                 new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "Added " + documentReference.getId());
+
+                        //Den tilføjede films titel gemmes
+                        newMovieTitle = movie.getTitle();
                     }
                 }
         )
@@ -259,6 +289,8 @@ public class ShareMoviesService extends Service {
                         Log.d(TAG, e.getMessage());
                     }
                 });
+
+
 
     }
     public void checkUser(final String email)
