@@ -2,21 +2,21 @@ package com.SMAPAppProjectGroup13.sharemovies;
 
 public class User {
 
-    private String userID;
+    private String email;
     private String groupID;
 
-    public User(String userID, String groupID)
+    public User(String email, String groupID)
     {
-        this.userID = userID;
+        this.email = email;
         this.groupID = groupID;
     }
 
-    public String getUserID() {
-        return userID;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getGroupID() {
