@@ -63,11 +63,11 @@ public class ShareMoviesService extends Service {
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private ListenerRegistration moviesListener;
     private User user;
+    private String localDocumentReference;
 
     private RequestQueue mRequestqueue;
 
     private List<Movie> movieList = new ArrayList<>();
-
 
 
     public class ShareMoviesServiceBinder extends Binder{
@@ -149,6 +149,28 @@ public class ShareMoviesService extends Service {
 
     public Movie getMovie(int position) {
         return movieList.get(position);
+    }
+
+    public void deleteMovie(Movie movie) {
+        movieList.remove(movie);
+        deleteMovieFromDataBase(movie);
+        sendBroadcastResult();
+    }
+
+    private void deleteMovieFromDataBase(final Movie movie) {
+        firestore.collection("movies").document("group1").collection("movies1").document(movie.getMovieId()).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void avoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+                });
     }
 
     public void sendBroadcastResult(){
@@ -241,7 +263,7 @@ public class ShareMoviesService extends Service {
         return movieList;
     }
 
-    public void addMovie(Movie movie)
+    public void addMovie(final Movie movie)
     {
 
         //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
@@ -250,6 +272,8 @@ public class ShareMoviesService extends Service {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "Added " + documentReference.getId());
+                        localDocumentReference = documentReference.getId();
+                        movie.setMovieId(localDocumentReference);
                     }
                 }
         )
