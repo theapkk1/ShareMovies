@@ -48,7 +48,7 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         // Get intent from GrouplistActivity
-        Intent shareMoviesIntent = getIntent();
+        final Intent shareMoviesIntent = getIntent();
 
         setupConnectionToShareMoviesService();
 
@@ -117,6 +117,8 @@ public class DetailsActivity extends AppCompatActivity {
                 rate_value = tv_yourRating.getText().toString();
                 movie.setPersonalRate(rate_value);// set rating
                 // updatere liste
+                //shareMoviesService.updateMovie(movie);
+                Toast.makeText(DetailsActivity.this,movie.getTitle()+ " updated in list",Toast.LENGTH_SHORT).show();;
                 setResult(RESULT_OK);
                 finish();
             }
