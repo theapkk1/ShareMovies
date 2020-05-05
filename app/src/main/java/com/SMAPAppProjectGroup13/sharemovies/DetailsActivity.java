@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -102,6 +103,9 @@ public class DetailsActivity extends AppCompatActivity {
         b_Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                shareMoviesService.deleteMovie(movie);
+                Toast.makeText(DetailsActivity.this, movie.getTitle()+ " deleted from list", Toast.LENGTH_SHORT).show();
+                finish();
 
             }
         });
