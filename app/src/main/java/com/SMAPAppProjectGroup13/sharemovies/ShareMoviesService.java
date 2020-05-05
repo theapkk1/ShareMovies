@@ -302,9 +302,8 @@ public class ShareMoviesService extends Service {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "Added " + documentReference.getId());
-
-                        //Den tilføjede films titel gemmes
-                        newMovieTitle = movie.getTitle();
+//
+//                        //Den tilføjede films titel gemmes
                         localDocumentReference = documentReference.getId();
                         movie.setMovieId(localDocumentReference);
                     }
