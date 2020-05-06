@@ -196,6 +196,7 @@ public class ShareMoviesService extends Service {
         documentReference.update("note",movie.getNote());
         documentReference.update("personalRate",movie.getPersonalRate());
         Log.d(TAG,"Note and personalrate was updated in firestore");
+        sendBroadcastResult();
     }
 
     public void sendBroadcastResult(){
@@ -302,7 +303,6 @@ public class ShareMoviesService extends Service {
                         movie.setMovieId(localDocumentReference);
 
                         // her skal idét opdateres i databasen
-                        //DocumentReference documentReference1 = firestore.collection("movies").document("group1").collection("movies1").document(movie.getMovieId());
                         documentReference.update("movieId",movie.getMovieId());
                         Log.d(TAG,"MovieId was updated in firestore");
                     }
@@ -315,7 +315,7 @@ public class ShareMoviesService extends Service {
                     }
                 });
     }
-
+/*
     public void updateMovie(Movie movie){
         DocumentReference df = firestore.collection("movies").document("group1").collection("movies1").document(movie.getMovieId());
         df.update(movie.getMovieId(),true).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -333,6 +333,8 @@ public class ShareMoviesService extends Service {
 
         sendBroadcastResult();
     }
+
+ */
 
     public void checkUser(final String email)
     {
