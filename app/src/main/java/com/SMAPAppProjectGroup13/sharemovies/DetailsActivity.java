@@ -109,7 +109,7 @@ public class DetailsActivity extends AppCompatActivity {
                 finish();
 
                  */
-                Intent intent = new Intent(DetailsActivity.this,GroupListActivity.class);
+                Intent intent = new Intent(DetailsActivity.this,GroupListActivity.class); // hvorfor laves der en ny intent her?
                 startActivity(intent);
                 shareMoviesService.deleteMovie(movie);
                 finish();
