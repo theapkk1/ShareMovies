@@ -3,6 +3,7 @@
     <string name="app_name">ShareMovies</string>
     <string name="addButton">Tilføj</string>
     <string name="searchHint">Søg efter film her</string>
+    <string name="AddUserHint">Email</string>
     <string name="log_in">Log ind</string>
     <string name="if_you_are_not_yet_registered_dont_worry_you_can_just_do_that_also">Hvis du ikke er registreret endnu, kan du også gøre dette!</string>
     <string name="welcome_to_sharemovies">Velkommen til ShareMovies!</string>
@@ -15,5 +16,7 @@
     <string name="movie_name">Film titel</string>
     <string name="your_rating">Din rating</string>
     <string name="description">Beskrivelse</string>
+    <string name="email">Email</string>
     <string name="BtnLogOut">Log ud</string>
+    <string name="button_addUser">Tilføj ven</string>
 </resources>

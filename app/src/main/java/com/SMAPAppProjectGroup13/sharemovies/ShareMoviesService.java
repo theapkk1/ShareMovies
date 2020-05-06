@@ -56,6 +56,7 @@ public class ShareMoviesService extends Service {
 
     private static final String TAG = "ShareMoviesService";
     public static final String BROADCAST_SHAREMOVIES_SERVICE_RESULT = "com.SMAPAppProjectGroup13.sharemovies";
+    //public static final String BROADCAST_SHAREMOVIES_SERVICE_RESULT_Main = "com.SMAPAppProjectGroup13.sharemovies.Main";
     private static final String CHANNEL_ID = "ShareMoviesChannel";
     private static final int NOTIFY_ID = 101;
     private final IBinder binder = new ShareMoviesServiceBinder();
@@ -82,7 +83,7 @@ public class ShareMoviesService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
 
-        getAllMoviesFromDatabase();
+        getAllMoviesFromDatabase(); // kan den hente groupID sådan?
     }
 
     @Override
@@ -157,6 +158,16 @@ public class ShareMoviesService extends Service {
         broadcastIntent.setAction(BROADCAST_SHAREMOVIES_SERVICE_RESULT);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
+/*
+    public void sendBroadcastResultToMain(){
+        Log.d(TAG,"broadcasting");
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(BROADCAST_SHAREMOVIES_SERVICE_RESULT_Main);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+    }
+
+ */
+
 
 
     public void addMovie(String movie){
@@ -223,8 +234,8 @@ public class ShareMoviesService extends Service {
     public List<Movie> getAllMoviesFromDatabase() {
         //Inspiration from: https://firebase.google.com/docs/firestore/query-data/get-data#get_all_documents_in_a_collection
         firestore.collection("movies").document("group1").collection("movies1")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
@@ -259,42 +270,93 @@ public class ShareMoviesService extends Service {
                         Log.d(TAG, e.getMessage());
                     }
                 });
-
     }
-    public void checkUser(final String email)
+    public void checkUser(final String userUid)
     {
-        // kig efter om brugerens email er i listen over users
+        // kig efter om brugerens Uid er i listen users
         firestore.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Log.d(TAG, document.getId() + " => " + document.getData());
-                        document.toObject(User.class);
-                        String dataEmail = document.getData().toString();
-                        if (email == dataEmail)
+                        //document.toObject(User.class);
+                        //String dataEmail = document.getData().toString();
+                        if (userUid.equals(document.getId()))
                         {
-                            //hvis brugeren er der skal brugeren gruppeID hentes og gemmes ned
-                             String group = firestore.collection("users").document(email).collection("group").get().toString();
+
+                            //hvis brugeren er der skal brugerens gruppeID hentes og gemmes ned
+                            firestore.collection("users").document(userUid).collection("informations").get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                                    String groupID = document.getString("groupID");
+                                                    String userUid = document.getString("userID");
+
+                                                    // User objekt oprettes med userID og groupID
+                                                    user = new User(userUid,groupID);
+                                                    // send broadcast
+
+                                                }
+                                            } else {
+                                                Log.d(TAG, "Error getting documents: ", task.getException());
+                                            }
+                                        }
+                                    });
+
+
+
+                             //String groupID = firestore.collection("users").document(document.getId()).collection("group").get().toString();
 
                         }
-                        // hvis brugeren ikke er der skal brugeren gemmes ned som ny bruger i users
+                        // hvis brugeren ikke er der skal brugeren gemmes ned som ny bruger i listen users
                         // og have tilkoblet en ny gruppe --> evt. et metode kald
-                        createUser(email);
-
-
+                        createNewUser(userUid);
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
             }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "onFailure: ",e);
+            }
         });
 
+    }
+
+    private void createNewUser(final String userUid) {
+        // gruppe nr. oprettes
+        final String newGroupID = "group"+userUid;
+        // User objekt oprettes med userID og groupID
+        user = new User(userUid, newGroupID);
+        // user tilføjes til listen
+        firestore.collection("users").document(userUid).collection("informations").add(user).addOnSuccessListener(
+                new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "Added " + documentReference.getId());
+
+                    }
+                }
+        )
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                });
 
 
     }
 
-    private void createUser(String email) {
+    public void addNewUserToList(String email)
+    {
+        // kode mangler
     }
 
     public List<Movie> getallMovies(){

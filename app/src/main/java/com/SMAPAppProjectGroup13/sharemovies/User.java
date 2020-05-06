@@ -4,10 +4,11 @@ public class User {
 
     private String email;
     private String groupID;
+    private String userID;
 
-    public User(String email, String groupID)
+    public User(String userID, String groupID)
     {
-        this.email = email;
+        this.userID = userID;
         this.groupID = groupID;
     }
 
@@ -25,6 +26,14 @@ public class User {
 
     public void setGroupID(String groupID) {
         this.groupID = groupID;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
 

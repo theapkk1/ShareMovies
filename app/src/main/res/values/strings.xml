@@ -2,6 +2,7 @@
     <string name="app_name">ShareMovies</string>
     <string name="addButton">Add</string>
     <string name="searchHint">search movie here</string>
+    <string name="AddUserHint">Email</string>
     <string name="log_in">Log In</string>
     <string name="if_you_are_not_yet_registered_dont_worry_you_can_just_do_that_also">If you are not yet registered dont worry, you can just do that also!</string>
     <string name="welcome_to_sharemovies">Welcome to ShareMovies!</string>
@@ -21,4 +22,5 @@
     <string name="todo" translatable="false">TODO</string>
     <string name="email">Email</string>
     <string name="BtnLogOut">Sign out</string>
+    <string name="button_addUser">Add friend</string>
 </resources>
