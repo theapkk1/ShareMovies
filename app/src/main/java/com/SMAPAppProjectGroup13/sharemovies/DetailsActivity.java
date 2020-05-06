@@ -1,5 +1,6 @@
 package com.SMAPAppProjectGroup13.sharemovies;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -72,6 +73,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         position = shareMoviesIntent.getIntExtra("position",0);
 
+
         // SeekBar for personal rating
         seekBar_rate.setMax(max);
         seekBar_rate.setProgress(current);
@@ -97,6 +99,7 @@ public class DetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // save values
                 setResult(Activity.RESULT_CANCELED);
+                Toast.makeText(DetailsActivity.this, "returning to shared list", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -112,22 +115,28 @@ public class DetailsActivity extends AppCompatActivity {
                 Intent intent = new Intent(DetailsActivity.this,GroupListActivity.class); // hvorfor laves der en ny intent her?
                 startActivity(intent);
                 shareMoviesService.deleteMovie(movie);
+                Toast.makeText(DetailsActivity.this, movie.getTitle()+ " deleted from list", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
         b_Share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                note = tv_note.getText().toString();
-                movie.setNote(note);
-                rate_value = tv_yourRating.getText().toString();
-                movie.setPersonalRate(rate_value);// set rating
+                //note = tv_note.getText().toString();
+                //rate_value = tv_yourRating.getText().toString();
+                movie.setNote(tv_note.getText().toString());
+                movie.setPersonalRate(tv_yourRating.getText().toString());// set rating
                 // updatere liste
                 shareMoviesService.updateMovie(movie);
                 setResult(RESULT_OK);
                 finish();
             }
         });
+
+        if (savedInstanceState != null){
+            rate_value = savedInstanceState.getString("rate");
+            note = savedInstanceState.getString("note");
+        }
 
     }
 
@@ -165,13 +174,26 @@ public class DetailsActivity extends AppCompatActivity {
                     tv_genre.setText(movie.getGenre());
                     tv_genre.setMovementMethod(new ScrollingMovementMethod());
                     tv_IMDBrating.setText(movie.getImdbRate());
-                    tv_yourRating.setText(movie.getPersonalRate());
+                    //tv_yourRating.setText(movie.getPersonalRate());
                     tv_description.setText(movie.getDescription());
                     tv_description.setMovementMethod(new ScrollingMovementMethod());
                     Glide.with(DetailsActivity.this).load(movie.getImage()).into(image);
-                    tv_note.setText(movie.getNote());
-                }
+                    //tv_note.setText(movie.getNote());
 
+                    // Her sammenlignes note og rate variablerne i firebase med lokale variabler.
+                    // Hvis disse er ens betyder det, at brugeren ikke har lavet nogen ændringer i rate og note,
+                    // og derfor sættes værdierne til de gemte værdier i firebase. Hvis de ikke er ens, betyder det
+                    // at brugeren har ændret i note og rate, og så sættes værdierne til de ændrede variabler.
+                    if (!movie.getPersonalRate().equals(rate_value) && rate_value != null){
+                        tv_yourRating.setText(rate_value);
+                    } else tv_yourRating.setText(movie.getPersonalRate());
+                    if (!movie.getNote().equals(note) && note != null){
+                        tv_note.setText(note);
+                    } else tv_note.setText(movie.getNote());
+
+                    // Set seekbar
+                    seekBar_rate.setProgress(current);
+                }
 
             }
             @Override
@@ -180,6 +202,13 @@ public class DetailsActivity extends AppCompatActivity {
                 Log.d(TAG, "onServiceDisconnected: service disconneccted");
             }
         };
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("rate", tv_yourRating.getText().toString());
+        outState.putString("note", tv_note.getText().toString());
     }
 
 }

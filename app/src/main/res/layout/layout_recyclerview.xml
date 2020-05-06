@@ -28,18 +28,18 @@
 
     <TextView
         android:id="@+id/ratingTxt"
-        android:layout_width="67dp"
-        android:layout_height="57dp"
-        android:layout_toRightOf="@+id/movieText"
+        android:layout_width="100dp"
+        android:layout_height="55dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="9dp"
         android:layout_marginLeft="9dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
+        android:layout_toEndOf="@+id/movieText"
+        android:layout_toRightOf="@+id/movieText"
         android:text="10"
         android:textSize="30sp"
-        android:textStyle="bold"
-        android:layout_toEndOf="@+id/movieText"
-        android:layout_marginStart="9dp"
-        android:layout_marginEnd="5dp" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/userText"
