@@ -126,7 +126,7 @@ public class ShareMoviesService extends Service {
                 //følgende for løkke løber kun igennem de ændringer der er sket i documenterne
                 for(DocumentChange dc : queryDocumentSnapshots.getDocumentChanges())
                 {
-                   DocumentSnapshot documentSnapshot = dc.getDocument();
+                   //DocumentSnapshot documentSnapshot = dc.getDocument();
                    //String id = documentSnapshot.getId();
                    int newIndex = dc.getNewIndex();
                    String title = movieList.get(newIndex).getTitle();
@@ -147,18 +147,6 @@ public class ShareMoviesService extends Service {
             }
         });
     }
-
-    /*
-    public String getMovieTitle()
-    {
-        //Tager det sidste element i movieList
-        //String movieTitle = movieList.get(movieList.size()-1).getTitle();
-        //String movieTitle = movieList.get(movieList.).getTitle();
-        String movieTitle = newMovieTitle;
-        return movieTitle;
-    }
-
-     */
 
 
     @Override
@@ -182,8 +170,8 @@ public class ShareMoviesService extends Service {
     }
 
     public void deleteMovie(Movie movie) {
-        movieList.remove(movie);
         deleteMovieFromDataBase(movie);
+        movieList.remove(movie);
         sendBroadcastResult();
     }
 
@@ -201,6 +189,13 @@ public class ShareMoviesService extends Service {
                         Log.w(TAG, "Error deleting document", e);
                     }
                 });
+    }
+    public void updateMovie(Movie movie)
+    {
+        DocumentReference documentReference = firestore.collection("movies").document("group1").collection("movies1").document(movie.getMovieId());
+        documentReference.update("note",movie.getNote());
+        documentReference.update("personalRate",movie.getPersonalRate());
+        Log.d(TAG,"Note and personalrate was updated in firestore");
     }
 
     public void sendBroadcastResult(){
@@ -302,10 +297,14 @@ public class ShareMoviesService extends Service {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "Added " + documentReference.getId());
-//
-//                        //Den tilføjede films titel gemmes
+
                         localDocumentReference = documentReference.getId();
                         movie.setMovieId(localDocumentReference);
+
+                        // her skal idét opdateres i databasen
+                        //DocumentReference documentReference1 = firestore.collection("movies").document("group1").collection("movies1").document(movie.getMovieId());
+                        documentReference.update("movieId",movie.getMovieId());
+                        Log.d(TAG,"MovieId was updated in firestore");
                     }
                 }
         )

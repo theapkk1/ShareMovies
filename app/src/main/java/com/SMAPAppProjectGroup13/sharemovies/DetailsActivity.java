@@ -48,7 +48,7 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         // Get intent from GrouplistActivity
-        Intent shareMoviesIntent = getIntent();
+        final Intent shareMoviesIntent = getIntent();
 
         setupConnectionToShareMoviesService();
 
@@ -103,10 +103,16 @@ public class DetailsActivity extends AppCompatActivity {
         b_Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 shareMoviesService.deleteMovie(movie);
                 Toast.makeText(DetailsActivity.this, movie.getTitle()+ " deleted from list", Toast.LENGTH_SHORT).show();
                 finish();
 
+                 */
+                Intent intent = new Intent(DetailsActivity.this,GroupListActivity.class);
+                startActivity(intent);
+                shareMoviesService.deleteMovie(movie);
+                finish();
             }
         });
         b_Share.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +123,7 @@ public class DetailsActivity extends AppCompatActivity {
                 rate_value = tv_yourRating.getText().toString();
                 movie.setPersonalRate(rate_value);// set rating
                 // updatere liste
+                shareMoviesService.updateMovie(movie);
                 setResult(RESULT_OK);
                 finish();
             }
