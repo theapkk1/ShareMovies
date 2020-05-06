@@ -314,10 +314,26 @@ public class ShareMoviesService extends Service {
                         Log.d(TAG, e.getMessage());
                     }
                 });
-
-
-
     }
+
+    public void updateMovie(Movie movie){
+        DocumentReference df = firestore.collection("movies").document("group1").collection("movies1").document(movie.getMovieId());
+        df.update(movie.getMovieId(),true).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "DocumentSnapshot successfully updated!");
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
+
+        sendBroadcastResult();
+    }
+
     public void checkUser(final String email)
     {
         // kig efter om brugerens email er i listen over users
