@@ -1,6 +1,7 @@
 package com.SMAPAppProjectGroup13.sharemovies;
 
 public class Movie {
+    private String movieId;
     private String title;
     private String genre;
     private String description;
@@ -74,4 +75,12 @@ public class Movie {
     public void setImage(String image) {
         this.image = image;
     }
+    public String getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(String movieId) {
+        this.movieId = movieId;
+    }
+
 }

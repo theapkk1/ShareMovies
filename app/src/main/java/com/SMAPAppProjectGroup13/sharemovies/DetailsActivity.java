@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -47,7 +48,7 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         // Get intent from GrouplistActivity
-        Intent shareMoviesIntent = getIntent();
+        final Intent shareMoviesIntent = getIntent();
 
         setupConnectionToShareMoviesService();
 
@@ -102,7 +103,16 @@ public class DetailsActivity extends AppCompatActivity {
         b_Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
+                shareMoviesService.deleteMovie(movie);
+                Toast.makeText(DetailsActivity.this, movie.getTitle()+ " deleted from list", Toast.LENGTH_SHORT).show();
+                finish();
 
+                 */
+                Intent intent = new Intent(DetailsActivity.this,GroupListActivity.class); // hvorfor laves der en ny intent her?
+                startActivity(intent);
+                shareMoviesService.deleteMovie(movie);
+                finish();
             }
         });
         b_Share.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +123,7 @@ public class DetailsActivity extends AppCompatActivity {
                 rate_value = tv_yourRating.getText().toString();
                 movie.setPersonalRate(rate_value);// set rating
                 // updatere liste
+                shareMoviesService.updateMovie(movie);
                 setResult(RESULT_OK);
                 finish();
             }
@@ -154,6 +165,7 @@ public class DetailsActivity extends AppCompatActivity {
                     tv_genre.setText(movie.getGenre());
                     tv_genre.setMovementMethod(new ScrollingMovementMethod());
                     tv_IMDBrating.setText(movie.getImdbRate());
+                    tv_yourRating.setText(movie.getPersonalRate());
                     tv_description.setText(movie.getDescription());
                     tv_description.setMovementMethod(new ScrollingMovementMethod());
                     Glide.with(DetailsActivity.this).load(movie.getImage()).into(image);
