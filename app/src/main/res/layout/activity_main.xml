@@ -20,7 +20,7 @@
         app:layout_constraintVertical_bias="0.808" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/current_groupTextView"
         android:layout_width="256dp"
         android:layout_height="97dp"
         android:text="@string/welcome_to_sharemovies"

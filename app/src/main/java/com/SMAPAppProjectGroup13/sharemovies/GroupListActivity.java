@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -45,6 +46,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     EditText searchField;
     RecyclerView movieListView;
     Adapter adapter;
+    TextView currentGroupTitle, currentGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +61,12 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
 
         addBtn = findViewById(R.id.addButton);
         //addGroup = findViewById(R.id.button_addGroup);
-        showList = findViewById(R.id.button_newGroup);
+        showList = findViewById(R.id.button_showGroup);
         signOutBtn = findViewById(R.id.BtnLogOut);
         listgroupID = findViewById(R.id.editText_group);
         searchField = findViewById(R.id.editText);
+        currentGroupTitle = findViewById(R.id.textView);
+        currentGroup = findViewById(R.id.textView_groupID);
         movieListView = findViewById(R.id.recyclerView);
         movieListView.setHasFixedSize(true);
         movieListView.setLayoutManager(new LinearLayoutManager(this));
@@ -177,6 +181,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 // update list here
                 updatedList();
                 Log.d(TAG,"Size of movie list: " + movieList.size());
+                currentGroup.setText(shareMoviesService.getcurrentGroupID());
 
             }
 

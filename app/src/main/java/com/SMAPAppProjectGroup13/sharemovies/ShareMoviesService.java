@@ -511,5 +511,9 @@ public class ShareMoviesService extends Service {
     public List<Movie> getallMovies() {
         return movieList;
     }
+
+    public String getcurrentGroupID(){
+        return user.getGroupID();
+    }
 }
 
