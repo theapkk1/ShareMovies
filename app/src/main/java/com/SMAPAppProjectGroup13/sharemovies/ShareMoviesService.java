@@ -351,6 +351,7 @@ public class ShareMoviesService extends Service {
                             Log.d(TAG, "onComplete: successfull");
                             DocumentSnapshot document = task.getResult();
 
+                            Log.d(TAG, "onComplete: slet");
                             //Hvis filmen allerede er tilføjet til databasen, skal den ikke tilføjes igen
                             if (!document.exists()) {
                                 Log.d(TAG, "onComplete: " + document.getData());
