@@ -251,7 +251,7 @@ public class ShareMoviesService extends Service {
         try {
             sendRequest(movie);
         } catch (Exception e) {
-            Toast.makeText(this, "Invalid search!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_search_try_again), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -305,6 +305,7 @@ public class ShareMoviesService extends Service {
 
         } catch (JSONException e) {
             Log.d(TAG, "onResponse: JSON error");
+            Toast.makeText(this, getString(R.string.invalid_search_try_again), Toast.LENGTH_SHORT).show();
         }
     }
 

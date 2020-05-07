@@ -19,8 +19,8 @@
 
     <Button
         android:id="@+id/btnLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="140dp"
+        android:layout_height="48dp"
         android:background="@color/colorPrimaryDark"
         android:text="@string/log_in_register"
         app:layout_constraintBottom_toBottomOf="parent"

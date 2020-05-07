@@ -45,6 +45,7 @@ import java.util.List;
 
 public class GroupListActivity extends AppCompatActivity implements Adapter.OnMovieListener {
 
+
     private static final String TAG = "GroupListActivity";
     public static final int REQUEST_CODE_DETAILSACTIVITY = 101;
     private ShareMoviesService shareMoviesService;
@@ -60,7 +61,6 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     Button showList;
     EditText listgroupID;
     EditText searchField;
-    EditText emailForFriend;
     RecyclerView movieListView;
     Adapter adapter;
 
@@ -81,7 +81,6 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         signOutBtn = findViewById(R.id.BtnLogOut);
         listgroupID = findViewById(R.id.editText_group);
         searchField = findViewById(R.id.editText);
-        emailForFriend = findViewById(R.id.editText_email);
         movieListView = findViewById(R.id.recyclerView);
         movieListView.setHasFixedSize(true);
         movieListView.setLayoutManager(new LinearLayoutManager(this));
@@ -95,17 +94,15 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 // metodekald i servicen
                 Log.d(TAG, "onClick: Group button pushed");
                 shareMoviesService.getAllMoviesForGroupFromDatabase(listgroupID.getText().toString());
-                
             }
         });
-
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String newMovie = searchField.getText().toString();
                 if (newMovie.equals("")) {
-                    Toast.makeText(GroupListActivity.this, "Please enter a movie", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupListActivity.this, getString(R.string.please_enter_a_movie), Toast.LENGTH_SHORT).show();
                 } else
                     shareMoviesService.addMovie(newMovie);
                 searchField.setText(""); // Clear search view after search
