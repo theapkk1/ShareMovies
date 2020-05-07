@@ -57,11 +57,9 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
 
     Button addBtn;
     Button signOutBtn;
-    Button addFriend;
     Button showList;
     EditText listgroupID;
     EditText searchField;
-    EditText emailForFriend;
     RecyclerView movieListView;
     Adapter adapter;
 
@@ -77,12 +75,10 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         startShareMoviesService(); // is used to bind user to the grouplist
 
         addBtn = findViewById(R.id.addButton);
-        addFriend = findViewById(R.id.button_addUser);
         showList = findViewById(R.id.button_groupID);
         signOutBtn = findViewById(R.id.BtnLogOut);
         listgroupID = findViewById(R.id.editText_group);
         searchField = findViewById(R.id.editText);
-        emailForFriend = findViewById(R.id.editText_email);
         movieListView = findViewById(R.id.recyclerView);
         movieListView.setHasFixedSize(true);
         movieListView.setLayoutManager(new LinearLayoutManager(this));
@@ -121,17 +117,6 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 startActivity(intent);
             }
         });
-
-        // tilføj bruger knappen trykkes på
-        addFriend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // kalder metode i servicen som tilføjer brugeren
-                shareMoviesService.addNewUserToList(emailForFriend.getText().toString());
-
-            }
-        });
-
 
     }
 

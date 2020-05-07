@@ -15,7 +15,10 @@ import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
@@ -24,6 +27,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
     private OnMovieListener _onMovieListener;
     private List<Movie> _movieList;
     private Movie movie;
+    String currentDateTimeString = java.text.DateFormat.getDateTimeInstance().format(new Date());
 
     public Adapter(Context context, List<Movie> movieList, OnMovieListener onMovieListener){
         _context = context;
@@ -48,7 +52,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
         movie = _movieList.get(position);
         holder.movieTitle.setText(movie.getTitle());
         holder.rating.setText(movie.getPersonalRate());
-        // holder.user.setText(movie.get);
+        holder.user.setText(currentDateTimeString);
 
         String url = movie.getImage();
         Picasso.with(holder.image.getContext()).load(url).into(holder.image);
