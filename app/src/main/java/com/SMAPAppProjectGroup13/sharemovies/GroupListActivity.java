@@ -45,7 +45,6 @@ import java.util.List;
 
 public class GroupListActivity extends AppCompatActivity implements Adapter.OnMovieListener {
 
-
     private static final String TAG = "GroupListActivity";
     public static final int REQUEST_CODE_DETAILSACTIVITY = 101;
     private ShareMoviesService shareMoviesService;
@@ -94,7 +93,9 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
             public void onClick(View v) {
                 // når man vil have vist listen for en gruppe man søger på
                 // metodekald i servicen
+                Log.d(TAG, "onClick: Group button pushed");
                 shareMoviesService.getAllMoviesForGroupFromDatabase(listgroupID.getText().toString());
+                
             }
         });
 

@@ -162,11 +162,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(LOG, "userUid:" + user.getUid());
 
                 ((TextView)findViewById(R.id.userId)).setText(user.getUid());
-                userUID = user.getUid();
 
                 // sender userUid med i metoden
-                shareMoviesService.checkUser2(user.getUid());
-                //shareMoviesService.checkUser(user.getUid());
+                shareMoviesService.checkUser(user.getUid());
 
 
 
