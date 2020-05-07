@@ -19,4 +19,6 @@
     <string name="email">Email</string>
     <string name="BtnLogOut">Log ud</string>
     <string name="button_addUser">Tilføj ven</string>
+    <string name="editText_group">Gruppe ID</string>
+    <string name="button_groupID">Vis film</string>
 </resources>

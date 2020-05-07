@@ -30,6 +30,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,13 +57,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //List of providers
-                List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build());
-
-                startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(),REQUESTCODE_SIGN_IN);
+                FirebaseLogin();
             }
         });
 
         startShareMoviesService(); // is used to bind user to the grouplist
+    }
+
+    private void FirebaseLogin() {
+        List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build());
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(), REQUESTCODE_SIGN_IN);
     }
 
     private void startShareMoviesService() {
@@ -75,13 +80,11 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onStart: ");
 
-        /*
+
         // here should the broadcast receiver be registered
         IntentFilter filter = new IntentFilter();
         filter.addAction(ShareMoviesService.BROADCAST_SHAREMOVIES_SERVICE_RESULT_Main);
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,filter);
-
-         */
     }
     @Override
     public void onResume(){
@@ -163,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(LOG, response.getError().getMessage());
             }
         }
+        Log.d(TAG, "onActivityResult: her skal jeg ikke være");
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -178,4 +182,5 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+
 }

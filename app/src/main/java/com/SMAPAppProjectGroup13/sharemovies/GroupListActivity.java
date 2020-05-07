@@ -58,6 +58,8 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     Button addBtn;
     Button signOutBtn;
     Button addFriend;
+    Button showList;
+    EditText listgroupID;
     EditText searchField;
     EditText emailForFriend;
     RecyclerView movieListView;
@@ -76,7 +78,9 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
 
         addBtn = findViewById(R.id.addButton);
         addFriend = findViewById(R.id.button_addUser);
+        showList = findViewById(R.id.button_groupID);
         signOutBtn = findViewById(R.id.BtnLogOut);
+        listgroupID = findViewById(R.id.editText_group);
         searchField = findViewById(R.id.editText);
         emailForFriend = findViewById(R.id.editText_email);
         movieListView = findViewById(R.id.recyclerView);
@@ -84,6 +88,15 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         movieListView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(this, movieList, this); // Indsæt parameter!
         movieListView.setAdapter(adapter);
+
+        showList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // når man vil have vist listen for en gruppe man søger på
+                // metodekald i servicen
+                shareMoviesService.getAllMoviesForGroupFromDatabase(listgroupID.getText().toString());
+            }
+        });
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
