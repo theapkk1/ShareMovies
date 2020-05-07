@@ -126,13 +126,13 @@ public class ShareMoviesService extends Service {
                 //følgende for løkke løber kun igennem de ændringer der er sket i documenterne
                 for(DocumentChange dc : queryDocumentSnapshots.getDocumentChanges())
                 {
-                   //DocumentSnapshot documentSnapshot = dc.getDocument();
-                   //String id = documentSnapshot.getId();
-                   int newIndex = dc.getNewIndex();
-                   String title = movieList.get(newIndex).getTitle();
+
                    switch (dc.getType())
                    {
                        case ADDED:
+                           int newIndex = dc.getNewIndex();
+                           String title = movieList.get(newIndex).getTitle();
+
                            Log.d(TAG, "document added");
                            //send notifikation med nyeste tilføjede film når listen ændrer sig
                            Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
