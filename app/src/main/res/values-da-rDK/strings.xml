@@ -16,4 +16,12 @@
     <string name="your_rating">Din rating</string>
     <string name="description">Beskrivelse</string>
     <string name="BtnLogOut">Log ud</string>
+    <string name="email">Email</string>
+    <string name="genre">Genre:</string>
+    <string name="noteHint">Skriv kommentarer her</string>
+    <string name="please_enter_a_movie">søg efter en film</string>
+    <string name="signing_out">Logger ud...</string>
+    <string name="returning">tilbage..</string>
+    <string name="deleted_from_list">slettet fra listen</string>
+    <string name="invalid_search_try_again">Kunne ikke finde film. Prøv igen!</string>
 </resources>

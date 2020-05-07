@@ -81,7 +81,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
             public void onClick(View v) {
                 final String newMovie = searchField.getText().toString();
                 if (newMovie.equals("")) {
-                    Toast.makeText(GroupListActivity.this, "Please enter a movie", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupListActivity.this, getString(R.string.please_enter_a_movie), Toast.LENGTH_SHORT).show();
                 } else
                     shareMoviesService.addMovie(newMovie);
                 searchField.setText(""); // Clear search view after search

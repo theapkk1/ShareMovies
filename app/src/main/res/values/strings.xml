@@ -15,10 +15,16 @@
     <string name="movie_name">Movie name</string>
     <string name="xx" translatable="false">XX</string>
     <string name="your_rating">Your rating:</string>
-    <string name="genre" translatable="false">Genre:</string>
+    <string name="genre">Genre:</string>
     <string name="description">Description</string>
     <string name="romantic" translatable="false">Romantic</string>
     <string name="todo" translatable="false">TODO</string>
     <string name="email">Email</string>
     <string name="BtnLogOut">Sign out</string>
+    <string name="noteHint">Write your comments here</string>
+    <string name="please_enter_a_movie">please enter a movie</string>
+    <string name="signing_out">signing out...</string>
+    <string name="returning">returning...</string>
+    <string name="deleted_from_list">deleted from list</string>
+    <string name="invalid_search_try_again">Invalid search. Try again!</string>
 </resources>
