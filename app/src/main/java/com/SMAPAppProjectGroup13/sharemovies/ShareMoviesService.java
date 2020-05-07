@@ -58,8 +58,6 @@ public class ShareMoviesService extends Service {
     private static final String TAG = "ShareMoviesService";
     public static final String BROADCAST_SHAREMOVIES_SERVICE_RESULT = "com.SMAPAppProjectGroup13.sharemovies";
     private static final String CHANNEL_ID = "ShareMoviesChannel";
-    private String newMovieID;
-    private String newMovieTitle;
     private static final int NOTIFY_ID = 101;
     private final IBinder binder = new ShareMoviesServiceBinder();
     private boolean started = false;
@@ -324,6 +322,7 @@ public class ShareMoviesService extends Service {
         return movieList;
     }
 
+
     public void addMovieToDatabase(final Movie movie) {
         if (firebaseDBExecutorService == null){
             firebaseDBExecutorService = Executors.newSingleThreadExecutor();
@@ -331,6 +330,8 @@ public class ShareMoviesService extends Service {
         firebaseDBExecutorService.submit(new Runnable() {
             @Override
             public void run() {
+                //Hvis filmen allerede er tilføjet til databasen, skal den ikke tilføjes igen
+               
                 //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
                 firestore.collection("movies").document("group1").collection("movies1").add(movie).addOnSuccessListener(
                         new OnSuccessListener<DocumentReference>() {
