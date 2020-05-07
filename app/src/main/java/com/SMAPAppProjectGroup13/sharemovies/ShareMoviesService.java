@@ -244,9 +244,6 @@ public class ShareMoviesService extends Service {
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
-
-
-
     public void addMovie(String movie) {
         try {
             sendRequest(movie);
