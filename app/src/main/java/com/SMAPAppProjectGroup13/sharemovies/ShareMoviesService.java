@@ -338,6 +338,7 @@ public class ShareMoviesService extends Service {
 
 
     public void addMovieToDatabase(final Movie movie) {
+        Log.d(TAG, "addMovieToDatabase called!");
         if (firebaseDBExecutorService == null){
             firebaseDBExecutorService = Executors.newSingleThreadExecutor();
         }
