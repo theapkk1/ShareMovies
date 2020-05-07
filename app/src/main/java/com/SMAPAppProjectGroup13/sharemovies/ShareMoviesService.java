@@ -53,8 +53,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.SMAPAppProjectGroup13.sharemovies.R.string.movie_already_exists;
-
 public class ShareMoviesService extends Service {
 
     private static final String TAG = "ShareMoviesService";
