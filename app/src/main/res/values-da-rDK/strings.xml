@@ -30,4 +30,5 @@
     <string name="button_groupID">Vis filmliste</string>
     <string name="editText_newGroup">Nyt gruppenavn</string>
     <string name="button_newGroup">Tilføj ny gruppe</string>
+    <string name="enter_new_group">Tilføj venligst en ny gruppe</string>
 </resources>

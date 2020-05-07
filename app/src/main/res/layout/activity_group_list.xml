@@ -72,7 +72,7 @@
         app:layout_constraintVertical_bias="0.122" />
 
     <Button
-        android:id="@+id/button_groupID2"
+        android:id="@+id/button_showGroup"
         android:layout_width="140dp"
         android:layout_height="47dp"
         android:background="@color/colorPrimaryDark"

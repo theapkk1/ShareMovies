@@ -42,6 +42,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     Button addGroup;
     Button showList;
     EditText listgroupID;
+    EditText newGroupName;
     EditText searchField;
     RecyclerView movieListView;
     Adapter adapter;
@@ -58,16 +59,29 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         startShareMoviesService(); // is used to bind user to the grouplist
 
         addBtn = findViewById(R.id.addButton);
-        //addGroup = findViewById(R.id.button_addGroup);
-        showList = findViewById(R.id.button_newGroup);
+        addGroup = findViewById(R.id.button_newGroup);
+        showList = findViewById(R.id.button_showGroup);
         signOutBtn = findViewById(R.id.BtnLogOut);
         listgroupID = findViewById(R.id.editText_group);
         searchField = findViewById(R.id.editText);
+        newGroupName = findViewById(R.id.editText_newGroup);
         movieListView = findViewById(R.id.recyclerView);
         movieListView.setHasFixedSize(true);
         movieListView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(this, movieList, this); // Indsæt parameter!
         movieListView.setAdapter(adapter);
+
+        addGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // når man vil have vist listen for en gruppe man søger på
+                // metodekald i servicen
+                Log.d(TAG, "onClick: add New Group button pushed");
+                shareMoviesService.addNewGroup(newGroupName.getText().toString());
+                newGroupName.setText(""); // Clear search view after search
+
+            }
+        });
 
         showList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +90,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 // metodekald i servicen
                 Log.d(TAG, "onClick: Group button pushed");
                 shareMoviesService.getAllMoviesForGroupFromDatabase(listgroupID.getText().toString());
+                listgroupID.setText(""); // Clear search view after search
             }
         });
 
@@ -103,9 +118,10 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
             }
         });
 
-
-
-
+        //if (shareMoviesService.newUser == true){
+            Toast.makeText(GroupListActivity.this, getString(R.string.enter_new_group), Toast.LENGTH_SHORT).show();
+            //shareMoviesService.newUser = false;
+        //}
     }
 
     private void startShareMoviesService() {
