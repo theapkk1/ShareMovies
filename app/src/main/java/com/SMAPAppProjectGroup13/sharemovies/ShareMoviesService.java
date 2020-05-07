@@ -91,6 +91,7 @@ public class ShareMoviesService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
 
+
         getAllMoviesFromDatabase();
     }
 
@@ -136,16 +137,17 @@ public class ShareMoviesService extends Service {
                         for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
                             //DocumentSnapshot documentSnapshot = dc.getDocument();
                             //String id = documentSnapshot.getId();
-                            int newIndex = dc.getNewIndex();
-                            //String title = movieList.get(newIndex).getTitle();
+
                             switch (dc.getType()) {
                                 case ADDED:
                                     Log.d(TAG, "document added");
+                                    int newIndex = dc.getNewIndex();
+                                    String title = movieList.get(newIndex).getTitle();
                                     //send notifikation med nyeste tilføjede film når listen ændrer sig
                                     Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
                                             .setContentTitle("ShareMovies")
                                             .setSmallIcon(R.drawable.sharemovies)
-                                            .setContentText(/*title + */" was added to your grouplist!")
+                                            .setContentText(title + " was added to your grouplist!")
                                             .build();
                                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ShareMoviesService.this);
                                     notificationManager.notify(NOTIFY_ID, notification);
@@ -489,3 +491,4 @@ public class ShareMoviesService extends Service {
         return movieList;
     }
 }
+
