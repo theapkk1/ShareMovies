@@ -6,6 +6,7 @@ public class Movie {
     private String genre;
     private String description;
     private String imdbRate;
+    private String personalRate;
     private String note;
     private String image;
 
@@ -52,7 +53,6 @@ public class Movie {
     public void setImdbRate(String imdbRate) {
         this.imdbRate = imdbRate;
     }
-    private String personalRate;
 
     public String getPersonalRate() {
         return personalRate;

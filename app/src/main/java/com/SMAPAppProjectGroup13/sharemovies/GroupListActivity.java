@@ -90,6 +90,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
             public void onClick(View v) {
                 // når man vil have vist listen for en gruppe man søger på
                 // metodekald i servicen
+                Log.d(TAG, "onClick: Group button pushed");
                 shareMoviesService.getAllMoviesForGroupFromDatabase(listgroupID.getText().toString());
             }
         });

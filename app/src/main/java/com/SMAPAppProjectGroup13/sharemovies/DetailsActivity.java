@@ -41,7 +41,8 @@ public class DetailsActivity extends AppCompatActivity {
     private SeekBar seekBar_rate;
 
     // Values for seekbar
-    int min = 0, max=100, current = 0;
+    int min = 0, max=100;
+    //current = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +77,18 @@ public class DetailsActivity extends AppCompatActivity {
 
         // SeekBar for personal rating
         seekBar_rate.setMax(max);
-        seekBar_rate.setProgress(current);
-        tv_yourRating.setText(""+current);
+        //seekBar_rate.setProgress(current);
+        //tv_yourRating.setText(""+current);
+
 
         seekBar_rate.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                current = progress;
-                tv_yourRating.setText("" + (double)current/10);
+                //current = progress;
+                //tv_yourRating.setText("" + (double)current/10);
+                double rateValue = ((double)progress/10.0);
+                tv_yourRating.setText(String.valueOf(rateValue));
+
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -118,7 +123,7 @@ public class DetailsActivity extends AppCompatActivity {
                 //rate_value = tv_yourRating.getText().toString();
                 movie.setNote(tv_note.getText().toString());
                 movie.setPersonalRate(tv_yourRating.getText().toString());// set rating
-                // updatere liste
+                // updaterer listen
                 shareMoviesService.updateMovie(movie);
                 setResult(RESULT_OK);
                 finish();
@@ -183,8 +188,9 @@ public class DetailsActivity extends AppCompatActivity {
                         tv_note.setText(note);
                     } else tv_note.setText(movie.getNote());
 
-                    // Set seekbar
-                    seekBar_rate.setProgress(current);
+                  //  int pRating = Integer.parseInt(movie.getPersonalRate());
+                  //  seekBar_rate.setProgress(pRating);
+
                 }
 
             }
