@@ -1,11 +1,7 @@
 package com.SMAPAppProjectGroup13.sharemovies;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Binder;
@@ -19,20 +15,15 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.ActionCodeSettings;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -336,7 +327,6 @@ public class ShareMoviesService extends Service {
         return movieList;
     }
 
-
     public void addMovieToDatabase(final Movie movie) {
         Log.d(TAG, "addMovieToDatabase called!");
         if (firebaseDBExecutorService == null){
@@ -345,68 +335,36 @@ public class ShareMoviesService extends Service {
         firebaseDBExecutorService.submit(new Runnable() {
             @Override
             public void run() {
-                firestore.collection("movies").document(user.getGroupID()).collection("movieList").document(movie.getTitle()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "onComplete: successfull");
-                            DocumentSnapshot document = task.getResult();
 
-                            Log.d(TAG, "onComplete: slet");
-                            //Hvis filmen allerede er tilføjet til databasen, skal den ikke tilføjes igen
-                            if (!document.exists()) {
-                                Log.d(TAG, "onComplete: " + document.getData());
-                                //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
-                                firestore.collection("movies").document(user.getGroupID()).collection("movieList").document(movie.getTitle()).collection("movie").add(movie).addOnSuccessListener(
-                                        new OnSuccessListener<DocumentReference>() {
-                                            @Override
-                                            public void onSuccess(DocumentReference documentReference) {
-                                                Log.d(TAG, "Added " + documentReference.getId());
+                //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
+                firestore.collection("movies").document(user.getGroupID()).collection("movieList").add(movie).addOnSuccessListener(
+                        new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d(TAG, "Added " + documentReference.getId());
 
-                                                localDocumentReference = documentReference.getId();
-                                                movie.setMovieId(localDocumentReference);
+                                localDocumentReference = documentReference.getId();
+                                movie.setMovieId(localDocumentReference);
 
-                                                // her skal dét opdateres i databasen
-                                                documentReference.update("movieId", movie.getMovieId());
-                                                Log.d(TAG, "MovieId was updated in firestore");
-                                            }
-                                        }
-                                )
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.d(TAG, e.getMessage());
-                                            }
-                                        });
-
-                            } else {
-                                //hvis filmen allerede er tilføjet i databasen, skal den ikke tilføjes igen
-                                //Toast.makeText(this, getString(R.string.movie_already_exists), Toast.LENGTH_LONG).show();
+                                // her skal dét opdateres i databasen
+                                documentReference.update("movieId", movie.getMovieId());
+                                Log.d(TAG, "MovieId was updated in firestore");
                             }
                         }
-                    }
-
-                });
-                Map<String, Object> data = new HashMap<>();
-                data.put("movieID", movie.getMovieId());
-                firestore.collection("movies").document(user.getGroupID()).collection("movieList").document(movie.getTitle()).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "onSuccess: setData");
-
-                    }
-                })
+                )
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "error setData");
+                                Log.d(TAG, e.getMessage());
                             }
                         });
 
-        }
 
-        });
-    }
+
+        }
+    });
+}
+
 
     public void checkUser(final String userUid){
         firestore.collection("users").document(userUid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
