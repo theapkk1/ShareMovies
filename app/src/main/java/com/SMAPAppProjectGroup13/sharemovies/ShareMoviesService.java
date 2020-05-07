@@ -246,9 +246,6 @@ public class ShareMoviesService extends Service {
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
-
-
-
     public void addMovie(String movie) {
         try {
             sendRequest(movie);
@@ -339,13 +336,12 @@ public class ShareMoviesService extends Service {
                         });
             }
         });
-
-
         return movieList;
     }
 
 
     public void addMovieToDatabase(final Movie movie) {
+        Log.d(TAG, "addMovieToDatabase called!");
         if (firebaseDBExecutorService == null){
             firebaseDBExecutorService = Executors.newSingleThreadExecutor();
         }
@@ -470,7 +466,6 @@ public class ShareMoviesService extends Service {
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "onSuccess: setData");
 
-
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
@@ -479,6 +474,7 @@ public class ShareMoviesService extends Service {
                         Log.d(TAG, "error setData");
                     }
                 });
+
 
     }
 
@@ -546,5 +542,9 @@ public class ShareMoviesService extends Service {
     }
 
 
+
+    public String getcurrentGroupID(){
+        return user.getGroupID();
+    }
 }
 
