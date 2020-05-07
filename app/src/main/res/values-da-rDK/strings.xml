@@ -27,5 +27,7 @@
     <string name="invalid_search_try_again">Kunne ikke finde film. Prøv igen!</string>
     <string name="button_addUser">Tilføj ven</string>
     <string name="editText_group">Gruppe ID</string>
-    <string name="button_groupID">Vis film</string>
+    <string name="button_groupID">Vis filmliste</string>
+    <string name="editText_newGroup">Nyt gruppenavn</string>
+    <string name="button_newGroup">Tilføj ny gruppe</string>
 </resources>

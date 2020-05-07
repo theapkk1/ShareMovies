@@ -30,5 +30,7 @@
     <string name="invalid_search_try_again">Invalid search. Try again!</string>
     <string name="button_addUser">Add friend</string>
     <string name="editText_group">Group ID</string>
-    <string name="button_groupID">Show movies</string>
+    <string name="button_groupID">Show movie list</string>
+    <string name="editText_newGroup">New group name</string>
+    <string name="button_newGroup">Add new group</string>
 </resources>
