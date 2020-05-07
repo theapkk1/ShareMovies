@@ -88,6 +88,7 @@ public class ShareMoviesService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
 
+
         getAllMoviesFromDatabase();
     }
 
@@ -393,3 +394,4 @@ public class ShareMoviesService extends Service {
         return movieList;
     }
 }
+
