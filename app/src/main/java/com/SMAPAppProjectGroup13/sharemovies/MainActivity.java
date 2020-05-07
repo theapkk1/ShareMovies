@@ -3,11 +3,14 @@ package com.SMAPAppProjectGroup13.sharemovies;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -27,8 +30,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
+
+    public String userUID = "default";
 
     private static final String TAG = "MainActivity";
     private ShareMoviesService shareMoviesService;
@@ -37,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean bound = false;
 
     private static final int REQUESTCODE_SIGN_IN = 1000;
+    private static final int REQUESTCODE_create_new_user = 1001;
     private static final String LOG = MainActivity.class.getSimpleName();
    // ImageView im = findViewById(R.id.imageV_Main);
 
@@ -52,13 +60,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //List of providers
-                List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build());
-
-                startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(),REQUESTCODE_SIGN_IN);
+                FirebaseLogin();
             }
         });
 
         startShareMoviesService(); // is used to bind user to the grouplist
+    }
+
+    private void FirebaseLogin() {
+        List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build());
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(), REQUESTCODE_SIGN_IN);
     }
 
     private void startShareMoviesService() {
@@ -71,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
     public void onStart(){
         super.onStart();
         Log.d(TAG, "onStart: ");
+
+
+        // here should the broadcast receiver be registered
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ShareMoviesService.BROADCAST_SHAREMOVIES_SERVICE_RESULT_Main);
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,filter);
     }
     @Override
     public void onResume(){
@@ -111,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void setupConnectionToShareMoviesService() {
         shareMoviesServiceConnection = new ServiceConnection(){
             @Override
@@ -129,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+
     //tjekker om vi får requestCode tilbage
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -141,23 +159,38 @@ public class MainActivity extends AppCompatActivity {
             if(resultCode == RESULT_OK)
             {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Log.d(LOG, user.getUid());
+                Log.d(LOG, "userUid:" + user.getUid());
+
                 ((TextView)findViewById(R.id.userId)).setText(user.getUid());
-//
-//                if(shareMoviesService.checkUser(user.getUid()))
-//                {
-//                    user_ = new User(user.getUid(),)
-//                }
+                userUID = user.getUid();
+
+                // sender userUid med i metoden
+                shareMoviesService.checkUser2(user.getUid());
+                //shareMoviesService.checkUser(user.getUid());
 
 
-                //Når brugeren er logget ind vises den fælles liste
-                finish();
-                Intent intent = new Intent(MainActivity.this, GroupListActivity.class);
-                startActivity(intent);
+
             } else
             {
                 Log.d(LOG, response.getError().getMessage());
             }
+
         }
+        Log.d(TAG, "onActivityResult: her skal jeg ikke være");
     }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG,"Broadcast received from background service, groupID");
+
+            //Når der er hentet et groupID for brugeren
+            Intent GroupIntent = new Intent(MainActivity.this, GroupListActivity.class);
+            //intent.putExtra("gruopID", user_.getGroupID());
+            startActivity(GroupIntent);
+            finish();
+
+        }
+    };
+
 }
