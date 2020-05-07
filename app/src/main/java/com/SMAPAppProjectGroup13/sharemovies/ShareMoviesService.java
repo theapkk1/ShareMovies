@@ -53,6 +53,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.SMAPAppProjectGroup13.sharemovies.R.string.movie_already_exists;
+
 public class ShareMoviesService extends Service {
 
     private static final String TAG = "ShareMoviesService";
@@ -346,31 +348,65 @@ public class ShareMoviesService extends Service {
         firebaseDBExecutorService.submit(new Runnable() {
             @Override
             public void run() {
-                //Hvis filmen allerede er tilføjet til databasen, skal den ikke tilføjes igen
-               
-                //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
-                firestore.collection("movies").document(user.getGroupID()).collection("movieList").add(movie).addOnSuccessListener(
-                        new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Log.d(TAG, "Added " + documentReference.getId());
+                firestore.collection("movies").document(user.getGroupID()).collection("movieList").document(movie.getTitle()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "onComplete: successfull");
+                            DocumentSnapshot document = task.getResult();
 
-                                localDocumentReference = documentReference.getId();
-                                movie.setMovieId(localDocumentReference);
+                            //Hvis filmen allerede er tilføjet til databasen, skal den ikke tilføjes igen
+                            if (!document.exists()) {
+                                Log.d(TAG, "onComplete: " + document.getData());
+                                //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
+                                firestore.collection("movies").document(user.getGroupID()).collection("movieList").document(movie.getTitle()).collection("movie").add(movie).addOnSuccessListener(
+                                        new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                Log.d(TAG, "Added " + documentReference.getId());
 
-                                // her skal idét opdateres i databasen
-                                documentReference.update("movieId", movie.getMovieId());
-                                Log.d(TAG, "MovieId was updated in firestore");
+                                                localDocumentReference = documentReference.getId();
+                                                movie.setMovieId(localDocumentReference);
+
+                                                // her skal dét opdateres i databasen
+                                                documentReference.update("movieId", movie.getMovieId());
+                                                Log.d(TAG, "MovieId was updated in firestore");
+                                            }
+                                        }
+                                )
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d(TAG, e.getMessage());
+                                            }
+                                        });
+
+                            } else {
+                                //hvis filmen allerede er tilføjet i databasen, skal den ikke tilføjes igen
+                                //Toast.makeText(this, getString(R.string.movie_already_exists), Toast.LENGTH_LONG).show();
                             }
                         }
-                )
+                    }
+
+                });
+                Map<String, Object> data = new HashMap<>();
+                data.put("movieID", movie.getMovieId());
+                firestore.collection("movies").document(user.getGroupID()).collection("movieList").document(movie.getTitle()).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "onSuccess: setData");
+
+                    }
+                })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, e.getMessage());
+                                Log.d(TAG, "error setData");
                             }
                         });
-            }
+
+        }
+
         });
     }
 

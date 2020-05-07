@@ -21,4 +21,5 @@
     <string name="button_addUser">Tilføj ven</string>
     <string name="editText_group">Gruppe ID</string>
     <string name="button_groupID">Vis film</string>
+    <string name="movie_already_exists">Filmen er allerede tilføjet til listen</string>
 </resources>

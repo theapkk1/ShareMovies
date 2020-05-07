@@ -25,4 +25,5 @@
     <string name="button_addUser">Add friend</string>
     <string name="editText_group">Group ID</string>
     <string name="button_groupID">Show movies</string>
+    <string name="movie_already_exists">Movie already added to list</string>
 </resources>
