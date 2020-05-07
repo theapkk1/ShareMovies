@@ -134,7 +134,7 @@ public class ShareMoviesService extends Service {
                             //DocumentSnapshot documentSnapshot = dc.getDocument();
                             //String id = documentSnapshot.getId();
                             int newIndex = dc.getNewIndex();
-                            //String title = movieList.get(newIndex).getTitle();
+                            String title = movieList.get(newIndex).getTitle();
                             switch (dc.getType()) {
                                 case ADDED:
                                     Log.d(TAG, "document added");
@@ -142,7 +142,7 @@ public class ShareMoviesService extends Service {
                                     Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
                                             .setContentTitle("ShareMovies")
                                             .setSmallIcon(R.drawable.sharemovies)
-                                            .setContentText(/*title + */" was added to your grouplist!")
+                                            .setContentText(title + " was added to your grouplist!")
                                             .build();
                                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ShareMoviesService.this);
                                     notificationManager.notify(NOTIFY_ID, notification);
