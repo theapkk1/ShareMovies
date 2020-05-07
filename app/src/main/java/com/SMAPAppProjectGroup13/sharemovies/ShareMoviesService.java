@@ -76,6 +76,8 @@ public class ShareMoviesService extends Service {
     private List<Movie> movieList = new ArrayList<>();
     private List<Movie> groupMovieList = new ArrayList<>();
 
+    private MainActivity mainActivity;
+
 
     public class ShareMoviesServiceBinder extends Binder {
         ShareMoviesService getService() {
@@ -91,8 +93,9 @@ public class ShareMoviesService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
 
-
-        getAllMoviesFromDatabase();
+        //String userUid = mainActivity.userUID;
+        //checkUser(userUid);
+        //getAllMoviesFromDatabase();
     }
 
     @Override
@@ -314,8 +317,9 @@ public class ShareMoviesService extends Service {
         firebaseDBExecutorService.submit(new Runnable() {
             @Override
             public void run() {
+                String test = user.getGroupID();
                 //Inspiration from: https://firebase.google.com/docs/firestore/query-data/get-data#get_all_documents_in_a_collection
-                firestore.collection("movies").document("group1").collection("movies1")
+                firestore.collection("movies").document(user.getGroupID()).collection("movies1")
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -369,6 +373,53 @@ public class ShareMoviesService extends Service {
         });
     }
 
+    public void checkUser2(final String userUid){
+        firestore.collection("users").document(userUid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    Log.d(TAG, "onComplete: successful");
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        firestore.collection("users").document(userUid).collection("group").get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                                String groupID = document.getString("groupID");
+                                                String userUid = document.getString("userID");
+
+                                                // User objekt oprettes med userID og groupID
+                                                user = new User(userUid,groupID);
+                                                //newUser = false;
+                                                // send broadcast
+                                                sendBroadcastResultToMain();
+                                                getAllMoviesFromDatabase();
+
+                                            }
+                                        } else {
+                                            Log.d(TAG, "Error getting documents: ", task.getException());
+                                        }
+                                    }
+                                });
+                    } else {
+                        Log.d(TAG, "No such document");
+                        createNewUser(userUid);
+                    }
+
+                }
+                else{
+                    Log.d(TAG, "onComplete: not successful");
+                }
+
+            }
+        });
+    }
+
+
     public void checkUser(final String userUid) {
 
         // kig efter om brugerens Uid er i listen users
@@ -382,7 +433,6 @@ public class ShareMoviesService extends Service {
                         //String dataEmail = document.getData().toString();
                         if (userUid.equals(document.getId()))
                         {
-
                             //hvis brugeren er der skal brugerens gruppeID hentes og gemmes ned
                             firestore.collection("users").document(userUid).collection("informations").get()
                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -430,13 +480,16 @@ public class ShareMoviesService extends Service {
     private void createNewUser(final String userUid) {
         String groupID = "group"+userUid;
         user = new User(userUid,groupID);
-        firestore.collection("users").document().collection("informations").add(user).addOnSuccessListener(
+
+        firestore.collection("users").document(userUid).collection("information").add(user).addOnSuccessListener(
                 new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "Added " + documentReference.getId());
                         // send broadcast
+
                         sendBroadcastResultToMain();
+                        getAllMoviesFromDatabase();
 
                     }
                 }
@@ -447,6 +500,24 @@ public class ShareMoviesService extends Service {
                         Log.d(TAG, e.getMessage());
                     }
                 });
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("userID", userUid);
+        data.put("groupID", groupID);
+        firestore.collection("users").document(userUid).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "onSuccess: setData");
+
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "error setData");
+                    }
+                });
+
 
     }
 

@@ -35,6 +35,8 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
+    public String userUID = "default";
+
     private static final String TAG = "MainActivity";
     private ShareMoviesService shareMoviesService;
     private ServiceConnection shareMoviesServiceConnection;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean bound = false;
 
     private static final int REQUESTCODE_SIGN_IN = 1000;
+    private static final int REQUESTCODE_create_new_user = 1001;
     private static final String LOG = MainActivity.class.getSimpleName();
    // ImageView im = findViewById(R.id.imageV_Main);
 
@@ -142,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+
     //tjekker om vi får requestCode tilbage
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -155,16 +160,21 @@ public class MainActivity extends AppCompatActivity {
             {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Log.d(LOG, "userUid:" + user.getUid());
+
                 ((TextView)findViewById(R.id.userId)).setText(user.getUid());
+                userUID = user.getUid();
 
                 // sender userUid med i metoden
-                shareMoviesService.checkUser(user.getUid());
+                shareMoviesService.checkUser2(user.getUid());
+                //shareMoviesService.checkUser(user.getUid());
+
 
 
             } else
             {
                 Log.d(LOG, response.getError().getMessage());
             }
+
         }
         Log.d(TAG, "onActivityResult: her skal jeg ikke være");
     }

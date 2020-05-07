@@ -132,7 +132,6 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
             }
         });
 
-
     }
 
     private void startShareMoviesService() {
