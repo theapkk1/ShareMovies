@@ -104,23 +104,15 @@ public class DetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // save values
                 setResult(Activity.RESULT_CANCELED);
-                Toast.makeText(DetailsActivity.this, "returning to shared list", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailsActivity.this, getString(R.string.returning), Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
         b_Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*
                 shareMoviesService.deleteMovie(movie);
-                Toast.makeText(DetailsActivity.this, movie.getTitle()+ " deleted from list", Toast.LENGTH_SHORT).show();
-                finish();
-
-                 */
-                Intent intent = new Intent(DetailsActivity.this,GroupListActivity.class); // hvorfor laves der en ny intent her?
-                startActivity(intent);
-                shareMoviesService.deleteMovie(movie);
-                Toast.makeText(DetailsActivity.this, movie.getTitle()+ " deleted from list", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailsActivity.this, movie.getTitle() +" "+ getString(R.string.deleted_from_list), Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

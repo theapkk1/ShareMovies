@@ -16,10 +16,19 @@
     <string name="movie_name">Film titel</string>
     <string name="your_rating">Din rating</string>
     <string name="description">Beskrivelse</string>
-    <string name="email">Email</string>
     <string name="BtnLogOut">Log ud</string>
+    <string name="email">Email</string>
+    <string name="genre">Genre:</string>
+    <string name="noteHint">Skriv kommentarer her</string>
+    <string name="please_enter_a_movie">søg efter en film</string>
+    <string name="signing_out">Logger ud...</string>
+    <string name="returning">tilbage..</string>
+    <string name="deleted_from_list">slettet fra listen</string>
+    <string name="invalid_search_try_again">Kunne ikke finde film. Prøv igen!</string>
     <string name="button_addUser">Tilføj ven</string>
     <string name="editText_group">Gruppe ID</string>
-    <string name="button_groupID">Vis film</string>
-    <string name="movie_already_exists">Filmen er allerede tilføjet til listen</string>
+    <string name="button_groupID">Vis filmliste</string>
+    <string name="editText_newGroup">Nyt gruppenavn</string>
+    <string name="button_newGroup">Tilføj ny gruppe</string>
+    <string name="currentGroupID">Current group:</string>
 </resources>

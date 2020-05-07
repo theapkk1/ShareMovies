@@ -12,38 +12,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GroupListActivity extends AppCompatActivity implements Adapter.OnMovieListener {
+
 
     private static final String TAG = "GroupListActivity";
     public static final int REQUEST_CODE_DETAILSACTIVITY = 101;
@@ -56,13 +40,13 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
 
     Button addBtn;
     Button signOutBtn;
-    Button addFriend;
+    Button addGroup;
     Button showList;
     EditText listgroupID;
     EditText searchField;
-    EditText emailForFriend;
     RecyclerView movieListView;
     Adapter adapter;
+    TextView currentGroupTitle, currentGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,12 +60,13 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         startShareMoviesService(); // is used to bind user to the grouplist
 
         addBtn = findViewById(R.id.addButton);
-        addFriend = findViewById(R.id.button_addUser);
-        showList = findViewById(R.id.button_groupID);
+        //addGroup = findViewById(R.id.button_addGroup);
+        showList = findViewById(R.id.button_showGroup);
         signOutBtn = findViewById(R.id.BtnLogOut);
         listgroupID = findViewById(R.id.editText_group);
         searchField = findViewById(R.id.editText);
-        emailForFriend = findViewById(R.id.editText_email);
+        currentGroupTitle = findViewById(R.id.textView);
+        currentGroup = findViewById(R.id.textView_groupID);
         movieListView = findViewById(R.id.recyclerView);
         movieListView.setHasFixedSize(true);
         movieListView.setLayoutManager(new LinearLayoutManager(this));
@@ -95,7 +80,6 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 // metodekald i servicen
                 Log.d(TAG, "onClick: Group button pushed");
                 shareMoviesService.getAllMoviesForGroupFromDatabase(listgroupID.getText().toString());
-                
             }
         });
 
@@ -104,7 +88,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
             public void onClick(View v) {
                 final String newMovie = searchField.getText().toString();
                 if (newMovie.equals("")) {
-                    Toast.makeText(GroupListActivity.this, "Please enter a movie", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupListActivity.this, getString(R.string.please_enter_a_movie), Toast.LENGTH_SHORT).show();
                 } else
                     shareMoviesService.addMovie(newMovie);
                 searchField.setText(""); // Clear search view after search
@@ -123,15 +107,8 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
             }
         });
 
-        // tilføj bruger knappen trykkes på
-        addFriend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // kalder metode i servicen som tilføjer brugeren
-                shareMoviesService.addNewUserToList(emailForFriend.getText().toString());
 
-            }
-        });
+
 
     }
 
@@ -204,6 +181,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 // update list here
                 updatedList();
                 Log.d(TAG,"Size of movie list: " + movieList.size());
+                currentGroup.setText(shareMoviesService.getcurrentGroupID());
 
             }
 
