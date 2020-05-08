@@ -506,8 +506,7 @@ public class ShareMoviesService extends Service {
 
     }
 
-
-
+    
     public List<Movie> getAllMoviesForGroupFromDatabase(final String groupID) {
         if (firebaseDBExecutorService == null) {
             firebaseDBExecutorService = Executors.newSingleThreadExecutor();
