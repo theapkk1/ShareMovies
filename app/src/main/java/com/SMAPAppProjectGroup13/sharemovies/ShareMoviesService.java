@@ -61,24 +61,20 @@ public class ShareMoviesService extends Service {
     public static final String BROADCAST_SHAREMOVIES_SERVICE_RESULT_Main = "com.SMAPAppProjectGroup13.sharemovies.Main";
     private static final String CHANNEL_ID = "ShareMoviesChannel";
     private static final int NOTIFY_ID = 101;
-    private final IBinder binder = new ShareMoviesServiceBinder();
-    private boolean started = false;
-    public boolean newUser = false;
     private String docRef;
+    private boolean started = false;
+
+    private final IBinder binder = new ShareMoviesServiceBinder();
+
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private ListenerRegistration moviesListener;
-    private User user;
-    private String localDocumentReference;
     private ExecutorService firebaseDBExecutorService;
     private ExecutorService notificationES;
-
 
     private RequestQueue mRequestqueue;
 
     private List<Movie> movieList = new ArrayList<>();
-    //private List<Movie> groupMovieList = new ArrayList<>();
-
-    //private MainActivity mainActivity;
+    private User user;
 
 
     public class ShareMoviesServiceBinder extends Binder {
@@ -94,10 +90,6 @@ public class ShareMoviesService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
-
-        //String userUid = mainActivity.userUID;
-        //checkUser(userUid);
-        //getAllMoviesFromDatabase();
     }
 
     @Override
@@ -114,51 +106,53 @@ public class ShareMoviesService extends Service {
     }
 
     private void bindToFireStore() {
+
         if (firebaseDBExecutorService == null){
                 firebaseDBExecutorService = Executors.newSingleThreadExecutor();
             }
                 firebaseDBExecutorService.submit(new Runnable() {
                     @Override
                     public void run() {
-                //snapshot trigger hver gang noget ændrer sig i collection
+
+
+                //snapshot trigger for each time something changes in the collection
                 moviesListener = firestore.collection("movies").document(user.getGroupID()).collection("movieList").addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                        //Hvis listen ikke er tom
+
                         if (queryDocumentSnapshots != null && !queryDocumentSnapshots.getDocuments().isEmpty()) {
-                            //loop over hver movie i listen
-                            //List<Movie> movies = new ArrayList<>();
                             movieList.clear();
                             for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
                                 Movie movie = snapshot.toObject(Movie.class);
                                 movie.setMovieId(snapshot.getId());
                                 movieList.add(movie);
                             }
-                            //send broadcast
                             sendBroadcastResult();
                         }
 
-                        //følgende for løkke løber kun igennem de ændringer der er sket i documenterne
+                        //this runs through changes in the document
                         for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                            //DocumentSnapshot documentSnapshot = dc.getDocument();
-                            //String id = documentSnapshot.getId();
 
                             switch (dc.getType()) {
                                 case ADDED:
                                     Log.d(TAG, "document added");
                                     int newIndex = dc.getNewIndex();
                                     String title = movieList.get(newIndex).getTitle();
-                                    //send notifikation med nyeste tilføjede film når listen ændrer sig
+                                    //show notification with the newest added movie
                                     showNotification(title);
                             }
                         }
                     }
                 });
+
             }
         });
+
+
     }
 
     public void showNotification(final String movieTitle){
+
         if (notificationES==null){
             notificationES = Executors.newSingleThreadExecutor();
         }
@@ -169,7 +163,6 @@ public class ShareMoviesService extends Service {
                 Intent notificationIntent = new Intent(ShareMoviesService.this, GroupListActivity.class);
                 PendingIntent pendingIntent =
                         PendingIntent.getActivity(ShareMoviesService.this, 0, notificationIntent, 0);
-
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     NotificationChannel serviceChannel = new NotificationChannel(CHANNEL_ID, "ShareMovies Service Channel", NotificationManager.IMPORTANCE_LOW);
@@ -185,6 +178,7 @@ public class ShareMoviesService extends Service {
                         .build();
                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ShareMoviesService.this);
                 notificationManager.notify(NOTIFY_ID, notification);
+
             }
         });
     }
@@ -195,9 +189,6 @@ public class ShareMoviesService extends Service {
         started = false;
         Log.d(TAG, "Background service destroyed");
         super.onDestroy();
-
-        //stop listening for changes in the firestore
-        //moviesListener.remove();
     }
 
     @Override
@@ -244,19 +235,24 @@ public class ShareMoviesService extends Service {
 
     public void updateMovie(final Movie movie) {
         Log.d(TAG, "updateMovie() called");
+
         if (firebaseDBExecutorService == null) {
             firebaseDBExecutorService = Executors.newSingleThreadExecutor();
         }
         firebaseDBExecutorService.submit(new Runnable() {
             @Override
             public void run() {
+
                 DocumentReference documentReference = firestore.collection("movies").document(user.getGroupID()).collection("movieList").document(movie.getMovieId());
                 documentReference.update("note", movie.getNote());
                 documentReference.update("personalRate", movie.getPersonalRate());
                 Log.d(TAG, "Note and personalrate was updated in firestore");
                 sendBroadcastResult();
+
             }
         });
+
+
     }
 
     public void sendBroadcastResult() {
@@ -337,12 +333,15 @@ public class ShareMoviesService extends Service {
     }
 
     public List<Movie> getAllMoviesFromDatabase(final String groupID) {
+
         if (firebaseDBExecutorService == null) {
             firebaseDBExecutorService = Executors.newSingleThreadExecutor();
         }
         firebaseDBExecutorService.submit(new Runnable() {
             @Override
             public void run() {
+
+                // update user
                 user.setGroupID(groupID);
 
                 //Inspiration from: https://firebase.google.com/docs/firestore/query-data/get-data#get_all_documents_in_a_collection
@@ -370,13 +369,13 @@ public class ShareMoviesService extends Service {
 
     public void addMovieToDatabase(final Movie movie) {
         Log.d(TAG, "addMovieToDatabase called!");
+
         if (firebaseDBExecutorService == null){
             firebaseDBExecutorService = Executors.newSingleThreadExecutor();
         }
         firebaseDBExecutorService.submit(new Runnable() {
             @Override
             public void run() {
-                //Hvis filmen allerede er tilføjet til databasen, skal den ikke tilføjes igen
                
                 //Inspiration from: https://www.youtube.com/watch?v=fJmVhOzXNJQ&feature=youtu.be
                 firestore.collection("movies").document(user.getGroupID()).collection("movieList").add(movie).addOnSuccessListener(
@@ -385,10 +384,8 @@ public class ShareMoviesService extends Service {
                             public void onSuccess(DocumentReference documentReference) {
                                 Log.d(TAG, "Added " + documentReference.getId());
 
-                                localDocumentReference = documentReference.getId();
-                                movie.setMovieId(localDocumentReference);
+                                movie.setMovieId(documentReference.getId());
 
-                                // her skal idét opdateres i databasen
                                 documentReference.update("movieId", movie.getMovieId());
                                 Log.d(TAG, "MovieId was updated in firestore");
                                 showNotification(movie.getTitle());
@@ -401,17 +398,22 @@ public class ShareMoviesService extends Service {
                                 Log.d(TAG, e.getMessage());
                             }
                         });
+
             }
         });
+
+
     }
 
     public void checkUser(final String userUid){
+
         if (firebaseDBExecutorService == null){
             firebaseDBExecutorService = Executors.newSingleThreadExecutor();
         }
         firebaseDBExecutorService.submit(new Runnable() {
             @Override
             public void run() {
+
         firestore.collection("users").document(userUid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -430,14 +432,15 @@ public class ShareMoviesService extends Service {
                                                 String groupID = document.getString("groupID");
                                                 String userUid = document.getString("userID");
 
-                                                // User objekt oprettes med userID og groupID
+                                                // User object with userID and groupID
                                                 user = new User(userUid,groupID);
                                                 docRef = document.getId();
 
-                                                // send broadcast
-                                                sendBroadcastResultToMain();
+                                                //update list
                                                 getAllMoviesFromDatabase(groupID);
 
+                                                // send broadcast
+                                                sendBroadcastResultToMain();
                                             }
                                         } else {
                                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -456,6 +459,7 @@ public class ShareMoviesService extends Service {
 
             }
         });
+
             }
         });
     }
@@ -471,8 +475,7 @@ public class ShareMoviesService extends Service {
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "Added " + documentReference.getId());
                         docRef = documentReference.getId();
-
-                        //newUser = true;
+                        // update list
                         getAllMoviesFromDatabase(groupID);
                         // send broadcast
                         sendBroadcastResultToMain();
@@ -502,18 +505,18 @@ public class ShareMoviesService extends Service {
                         Log.d(TAG, "error setData");
                     }
                 });
-
-
     }
 
     
     public List<Movie> getAllMoviesForGroupFromDatabase(final String groupID) {
+
         if (firebaseDBExecutorService == null) {
             firebaseDBExecutorService = Executors.newSingleThreadExecutor();
         }
         firebaseDBExecutorService.submit(new Runnable() {
             @Override
             public void run() {
+
                 Log.d(TAG, "run: Group data "+groupID);
                 user.setGroupID(groupID);
                 //Inspiration from: https://firebase.google.com/docs/firestore/query-data/get-data#get_all_documents_in_a_collection
@@ -528,9 +531,7 @@ public class ShareMoviesService extends Service {
                                         Log.d(TAG, document.getId() + " => " + document.getData());
                                         movieList.add((Movie) document.toObject(Movie.class));
 
-                                        // OPDATER LISTENS NAVN FOROVEN
-
-                                        sendBroadcastResult();
+                                                                      sendBroadcastResult();
                                     }
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -540,7 +541,6 @@ public class ShareMoviesService extends Service {
             }
         });
         return movieList;
-
     }
 
     public List<Movie> getallMovies() {
@@ -560,19 +560,15 @@ public class ShareMoviesService extends Service {
                 user.setGroupID(groupName);
                 getAllMoviesFromDatabase(groupName);
                 sendBroadcastResult();
-
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.d(TAG, "error setData");
+
                     }
                 });
-
-
-
-
     }
 
 
