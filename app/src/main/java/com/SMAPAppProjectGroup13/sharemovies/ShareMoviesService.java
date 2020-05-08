@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -69,6 +70,7 @@ public class ShareMoviesService extends Service {
     private User user;
     private String localDocumentReference;
     private ExecutorService firebaseDBExecutorService;
+    private ExecutorService notificationES;
 
 
     private RequestQueue mRequestqueue;
@@ -147,17 +149,42 @@ public class ShareMoviesService extends Service {
                                     int newIndex = dc.getNewIndex();
                                     String title = movieList.get(newIndex).getTitle();
                                     //send notifikation med nyeste tilføjede film når listen ændrer sig
-                                    Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
-                                            .setContentTitle("ShareMovies")
-                                            .setSmallIcon(R.drawable.sharemovies)
-                                            .setContentText(title + " was added to your grouplist!")
-                                            .build();
-                                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ShareMoviesService.this);
-                                    notificationManager.notify(NOTIFY_ID, notification);
+                                    showNotification(title);
                             }
                         }
                     }
                 });
+            }
+        });
+    }
+
+    public void showNotification(final String movieTitle){
+        if (notificationES==null){
+            notificationES = Executors.newSingleThreadExecutor();
+        }
+        notificationES.submit(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "notifikation!!!!");
+                Intent notificationIntent = new Intent(ShareMoviesService.this, GroupListActivity.class);
+                PendingIntent pendingIntent =
+                        PendingIntent.getActivity(ShareMoviesService.this, 0, notificationIntent, 0);
+
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    NotificationChannel serviceChannel = new NotificationChannel(CHANNEL_ID, "ShareMovies Service Channel", NotificationManager.IMPORTANCE_LOW);
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    mNotificationManager.createNotificationChannel(serviceChannel);
+                }
+
+                Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
+                        .setContentTitle("ShareMovies")
+                        .setSmallIcon(R.drawable.sharemovies)
+                        .setContentText(movieTitle + " was added to your grouplist!")
+                        .build();
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ShareMoviesService.this);
+                notificationManager.notify(NOTIFY_ID, notification);
             }
         });
     }
@@ -249,6 +276,7 @@ public class ShareMoviesService extends Service {
     public void addMovie(String movie) {
         try {
             sendRequest(movie);
+            Toast.makeText(this, movie + " " + getString(R.string.added_to_list),Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.invalid_search_try_again), Toast.LENGTH_SHORT).show();
         }
@@ -258,7 +286,7 @@ public class ShareMoviesService extends Service {
         if (mRequestqueue == null) {
             mRequestqueue = Volley.newRequestQueue(this);
         }
-
+        // Inspiration: https://stackoverflow.com/questions/19167954/use-uri-builder-in-android-or-create-url-with-variables
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")
                 .authority("www.omdbapi.com")
@@ -363,6 +391,7 @@ public class ShareMoviesService extends Service {
                                 // her skal idét opdateres i databasen
                                 documentReference.update("movieId", movie.getMovieId());
                                 Log.d(TAG, "MovieId was updated in firestore");
+                                showNotification(movie.getTitle());
                             }
                         }
                 )
@@ -418,7 +447,6 @@ public class ShareMoviesService extends Service {
                     } else {
                         Log.d(TAG, "No such document");
                         createNewUser(userUid);
-
                     }
 
                 }
@@ -444,7 +472,7 @@ public class ShareMoviesService extends Service {
                         Log.d(TAG, "Added " + documentReference.getId());
                         docRef = documentReference.getId();
 
-                        newUser = true;
+                        //newUser = true;
                         getAllMoviesFromDatabase(groupID);
                         // send broadcast
                         sendBroadcastResultToMain();
@@ -520,15 +548,18 @@ public class ShareMoviesService extends Service {
     }
 
     public void addNewGroup(final String groupName){
+
+        //Create group in users collection
         Map<String, Object> data = new HashMap<>();
         data.put("groupID", groupName);
         data.put("userID", user.getUserID());
-        user.setGroupID(groupName);
         firestore.collection("users").document(user.getUserID()).collection("information").document(docRef).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "onSuccess: setData for group name");
                 user.setGroupID(groupName);
+                getAllMoviesFromDatabase(groupName);
+                sendBroadcastResult();
 
             }
         })
@@ -538,6 +569,55 @@ public class ShareMoviesService extends Service {
                         Log.d(TAG, "error setData");
                     }
                 });
+/*
+        //Create group in movies collection
+        Map<String, Object> movieGroup = new HashMap<>();
+        movieGroup.put("Created by user", user.getUserID());
+        firestore.collection("movies").document(groupName).set(movieGroup).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "onSuccess: setData for group name");
+
+                //update movie list
+                //getAllMoviesFromDatabase(groupName);
+                getAllMoviesFromDatabase(groupName);
+
+
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "error setData");
+                    }
+                });
+
+        /*
+
+        //add test movie to movieList
+        Movie testMovie = new Movie("testFilm","testGenre","testDescription","0","0","testNote", "https://w7.pngwing.com/pngs/467/244/png-transparent-popcorn-cartoon-film-cartoon-popcorn-food-film-drawing.png\n");
+        firestore.collection("movies").document(groupName).collection("movieList").add(testMovie).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Log.d(TAG, "onSuccess: setData for group name");
+
+                //update movie list
+                getAllMoviesFromDatabase(groupName);
+
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "error setData");
+                    }
+                });
+
+         */
+
+
+
+
     }
 
 
