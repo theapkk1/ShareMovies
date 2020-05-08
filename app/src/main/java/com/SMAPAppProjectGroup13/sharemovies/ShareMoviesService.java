@@ -418,7 +418,6 @@ public class ShareMoviesService extends Service {
                     } else {
                         Log.d(TAG, "No such document");
                         createNewUser(userUid);
-
                     }
 
                 }
@@ -444,7 +443,7 @@ public class ShareMoviesService extends Service {
                         Log.d(TAG, "Added " + documentReference.getId());
                         docRef = documentReference.getId();
 
-                        newUser = true;
+                        //newUser = true;
                         getAllMoviesFromDatabase(groupID);
                         // send broadcast
                         sendBroadcastResultToMain();
@@ -521,15 +520,18 @@ public class ShareMoviesService extends Service {
     }
 
     public void addNewGroup(final String groupName){
+
+        //Create group in users collection
         Map<String, Object> data = new HashMap<>();
         data.put("groupID", groupName);
         data.put("userID", user.getUserID());
-        user.setGroupID(groupName);
         firestore.collection("users").document(user.getUserID()).collection("information").document(docRef).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "onSuccess: setData for group name");
                 user.setGroupID(groupName);
+                getAllMoviesFromDatabase(groupName);
+                sendBroadcastResult();
 
             }
         })
@@ -539,6 +541,55 @@ public class ShareMoviesService extends Service {
                         Log.d(TAG, "error setData");
                     }
                 });
+/*
+        //Create group in movies collection
+        Map<String, Object> movieGroup = new HashMap<>();
+        movieGroup.put("Created by user", user.getUserID());
+        firestore.collection("movies").document(groupName).set(movieGroup).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "onSuccess: setData for group name");
+
+                //update movie list
+                //getAllMoviesFromDatabase(groupName);
+                getAllMoviesFromDatabase(groupName);
+
+
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "error setData");
+                    }
+                });
+
+        /*
+
+        //add test movie to movieList
+        Movie testMovie = new Movie("testFilm","testGenre","testDescription","0","0","testNote", "https://w7.pngwing.com/pngs/467/244/png-transparent-popcorn-cartoon-film-cartoon-popcorn-food-film-drawing.png\n");
+        firestore.collection("movies").document(groupName).collection("movieList").add(testMovie).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Log.d(TAG, "onSuccess: setData for group name");
+
+                //update movie list
+                getAllMoviesFromDatabase(groupName);
+
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "error setData");
+                    }
+                });
+
+         */
+
+
+
+
     }
 
 

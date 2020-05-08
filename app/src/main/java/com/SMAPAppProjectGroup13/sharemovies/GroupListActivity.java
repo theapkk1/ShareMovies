@@ -83,6 +83,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 Log.d(TAG, "onClick: add New Group button pushed");
                 shareMoviesService.addNewGroup(newGroupName.getText().toString());
                 newGroupName.setText(""); // Clear search view after search
+                shareMoviesService.getcurrentGroupID();
 
             }
         });
@@ -95,6 +96,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 Log.d(TAG, "onClick: Group button pushed");
                 shareMoviesService.getAllMoviesForGroupFromDatabase(listgroupID.getText().toString());
                 listgroupID.setText(""); // Clear search view after search
+                shareMoviesService.getcurrentGroupID();
             }
         });
 
@@ -196,7 +198,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 // update list here
                 updatedList();
                 Log.d(TAG,"Size of movie list: " + movieList.size());
-                currentGroup.setText(shareMoviesService.getcurrentGroupID());
+                //currentGroup.setText(shareMoviesService.getcurrentGroupID());
 
             }
 
@@ -228,6 +230,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         movieList.clear();
         movieList.addAll(shareMoviesService.getallMovies());
         adapter.setMovies(movieList);
+        currentGroup.setText(shareMoviesService.getcurrentGroupID());
     }
 
     @Override
