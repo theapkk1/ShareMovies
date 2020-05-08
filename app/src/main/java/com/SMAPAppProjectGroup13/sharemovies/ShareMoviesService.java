@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -69,6 +70,7 @@ public class ShareMoviesService extends Service {
     private User user;
     private String localDocumentReference;
     private ExecutorService firebaseDBExecutorService;
+    private ExecutorService notificationES;
 
 
     private RequestQueue mRequestqueue;
@@ -147,17 +149,42 @@ public class ShareMoviesService extends Service {
                                     int newIndex = dc.getNewIndex();
                                     String title = movieList.get(newIndex).getTitle();
                                     //send notifikation med nyeste tilføjede film når listen ændrer sig
-                                    Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
-                                            .setContentTitle("ShareMovies")
-                                            .setSmallIcon(R.drawable.sharemovies)
-                                            .setContentText(title + " was added to your grouplist!")
-                                            .build();
-                                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ShareMoviesService.this);
-                                    notificationManager.notify(NOTIFY_ID, notification);
+                                    showNotification(title);
                             }
                         }
                     }
                 });
+            }
+        });
+    }
+
+    public void showNotification(final String movieTitle){
+        if (notificationES==null){
+            notificationES = Executors.newSingleThreadExecutor();
+        }
+        notificationES.submit(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "notifikation!!!!");
+                Intent notificationIntent = new Intent(ShareMoviesService.this, GroupListActivity.class);
+                PendingIntent pendingIntent =
+                        PendingIntent.getActivity(ShareMoviesService.this, 0, notificationIntent, 0);
+
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    NotificationChannel serviceChannel = new NotificationChannel(CHANNEL_ID, "ShareMovies Service Channel", NotificationManager.IMPORTANCE_LOW);
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    mNotificationManager.createNotificationChannel(serviceChannel);
+                }
+
+                Notification notification = new NotificationCompat.Builder(ShareMoviesService.this, CHANNEL_ID)
+                        .setContentTitle("ShareMovies")
+                        .setSmallIcon(R.drawable.sharemovies)
+                        .setContentText(movieTitle + " was added to your grouplist!")
+                        .build();
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ShareMoviesService.this);
+                notificationManager.notify(NOTIFY_ID, notification);
             }
         });
     }
@@ -258,7 +285,7 @@ public class ShareMoviesService extends Service {
         if (mRequestqueue == null) {
             mRequestqueue = Volley.newRequestQueue(this);
         }
-
+        // Inspiration: https://stackoverflow.com/questions/19167954/use-uri-builder-in-android-or-create-url-with-variables
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")
                 .authority("www.omdbapi.com")
@@ -363,6 +390,7 @@ public class ShareMoviesService extends Service {
                                 // her skal idét opdateres i databasen
                                 documentReference.update("movieId", movie.getMovieId());
                                 Log.d(TAG, "MovieId was updated in firestore");
+                                showNotification(movie.getTitle());
                             }
                         }
                 )
