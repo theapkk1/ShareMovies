@@ -29,7 +29,7 @@
     <string name="editText_group">Gruppe ID</string>
     <string name="button_groupID">Vis filmliste</string>
     <string name="editText_newGroup">Nyt gruppenavn</string>
-    <string name="button_newGroup">Tilføj ny gruppe</string>
+    <string name="button_newGroup">Tilføj ny gruppe ID</string>
     <string name="enter_new_group">Tilføj venligst en ny gruppe</string>
     <string name="currentGroupID">Current group:</string>
     <string name="added_to_list">tilføjet til listen</string>
