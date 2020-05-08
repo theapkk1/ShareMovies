@@ -42,7 +42,6 @@ public class DetailsActivity extends AppCompatActivity {
 
     // Values for seekbar
     int min = 0, max=100;
-    //current = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,18 +73,12 @@ public class DetailsActivity extends AppCompatActivity {
 
         position = shareMoviesIntent.getIntExtra("position",0);
 
-
         // SeekBar for personal rating
         seekBar_rate.setMax(max);
-        //seekBar_rate.setProgress(current);
-        //tv_yourRating.setText(""+current);
-
 
         seekBar_rate.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                //current = progress;
-                //tv_yourRating.setText("" + (double)current/10);
                 double rateValue = ((double)progress/10.0);
                 tv_yourRating.setText(String.valueOf(rateValue));
 
@@ -102,7 +95,6 @@ public class DetailsActivity extends AppCompatActivity {
         b_Back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // save values
                 setResult(Activity.RESULT_CANCELED);
                 Toast.makeText(DetailsActivity.this, getString(R.string.returning), Toast.LENGTH_SHORT).show();
                 finish();
@@ -119,11 +111,10 @@ public class DetailsActivity extends AppCompatActivity {
         b_Share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //note = tv_note.getText().toString();
-                //rate_value = tv_yourRating.getText().toString();
+                // Sets rate and notes
                 movie.setNote(tv_note.getText().toString());
-                movie.setPersonalRate(tv_yourRating.getText().toString());// set rating
-                // updaterer listen
+                movie.setPersonalRate(tv_yourRating.getText().toString());
+                // updating the list through service
                 shareMoviesService.updateMovie(movie);
                 setResult(RESULT_OK);
                 finish();
@@ -131,6 +122,7 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
         if (savedInstanceState != null){
+            // Restores variables note and rate during rotation
             rate_value = savedInstanceState.getString("rate");
             note = savedInstanceState.getString("note");
         }
@@ -171,11 +163,9 @@ public class DetailsActivity extends AppCompatActivity {
                     tv_genre.setText(movie.getGenre());
                     tv_genre.setMovementMethod(new ScrollingMovementMethod());
                     tv_IMDBrating.setText(movie.getImdbRate());
-                    //tv_yourRating.setText(movie.getPersonalRate());
                     tv_description.setText(movie.getDescription());
                     tv_description.setMovementMethod(new ScrollingMovementMethod());
                     Glide.with(DetailsActivity.this).load(movie.getImage()).into(image);
-                    //tv_note.setText(movie.getNote());
 
                     // Her sammenlignes note og rate variablerne i firebase med lokale variabler.
                     // Hvis disse er ens betyder det, at brugeren ikke har lavet nogen ændringer i rate og note,
@@ -187,12 +177,7 @@ public class DetailsActivity extends AppCompatActivity {
                     if (!movie.getNote().equals(note) && note != null){
                         tv_note.setText(note);
                     } else tv_note.setText(movie.getNote());
-
-                  //  int pRating = Integer.parseInt(movie.getPersonalRate());
-                  //  seekBar_rate.setProgress(pRating);
-
                 }
-
             }
             @Override
             public void onServiceDisconnected(ComponentName name) {
@@ -205,8 +190,8 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        // Saving variables note and rate during rotation
         outState.putString("rate", tv_yourRating.getText().toString());
         outState.putString("note", tv_note.getText().toString());
     }
-
 }

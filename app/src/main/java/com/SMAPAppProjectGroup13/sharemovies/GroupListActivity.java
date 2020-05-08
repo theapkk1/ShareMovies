@@ -38,13 +38,8 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     private Movie movie;
     private String groupID;
 
-    Button addBtn;
-    Button signOutBtn;
-    Button addGroup;
-    Button showList;
-    EditText listgroupID;
-    EditText newGroupName;
-    EditText searchField;
+    Button addBtn, signOutBtn, addGroup, showList;
+    EditText listgroupID, newGroupName, searchField;
     RecyclerView movieListView;
     Adapter adapter;
     TextView currentGroupTitle, currentGroup;
@@ -58,8 +53,9 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         Intent MainIntent = getIntent();
         groupID = MainIntent.getStringExtra("group");
 
-        startShareMoviesService(); // is used to bind user to the grouplist
+        startShareMoviesService();
 
+        // Get widget references
         addBtn = findViewById(R.id.addButton);
         addGroup = findViewById(R.id.button_newGroup);
         showList = findViewById(R.id.button_showGroup);
@@ -72,15 +68,14 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         movieListView = findViewById(R.id.recyclerView);
         movieListView.setHasFixedSize(true);
         movieListView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new Adapter(this, movieList, this); // Indsæt parameter!
+        adapter = new Adapter(this, movieList, this);
         movieListView.setAdapter(adapter);
 
         addGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // når man vil have vist listen for en gruppe man søger på
-                // metodekald i servicen
                 Log.d(TAG, "onClick: add New Group button pushed");
+                // Creates a new group and show this current group id
                 shareMoviesService.addNewGroup(newGroupName.getText().toString());
                 newGroupName.setText(""); // Clear search view after search
                 shareMoviesService.getcurrentGroupID();
@@ -91,8 +86,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         showList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // når man vil have vist listen for en gruppe man søger på
-                // metodekald i servicen
+                // Shows the searched group list
                 Log.d(TAG, "onClick: Group button pushed");
                 shareMoviesService.getAllMoviesForGroupFromDatabase(listgroupID.getText().toString());
                 listgroupID.setText(""); // Clear search view after search
@@ -118,19 +112,15 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 finish();
-                Toast.makeText(GroupListActivity.this, "Signing out...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(GroupListActivity.this, getString(R.string.signing_out), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(intent);
             }
         });
-
-
-
-
     }
 
     private void startShareMoviesService() {
-        // start service
+        // starts service
         Intent shareMoviesServiceIntent = new Intent(GroupListActivity.this, ShareMoviesService.class);
         startService(shareMoviesServiceIntent);
     }
@@ -140,7 +130,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         super.onStart();
         Log.d(TAG, "onStart: ");
 
-        // here should the broadcast receiver be registered
+        // Broadcast receiver registered
         IntentFilter filter = new IntentFilter();
         filter.addAction(ShareMoviesService.BROADCAST_SHAREMOVIES_SERVICE_RESULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,filter);
@@ -152,7 +142,6 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         Log.d(TAG, "onResume: ");
         setupConnectionToShareMoviesService();
         bindToShareMoviewService();
-
     }
 
     @Override
@@ -167,7 +156,7 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
     public void onStop() {
         super.onStop();
         Log.d(TAG, "onStop: ");
-        // unregister receivers
+        // Unregister receivers
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
@@ -177,7 +166,6 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
             bound = false;
         }
     }
-
 
     private void bindToShareMoviewService() {
         bindService(new Intent(GroupListActivity.this, ShareMoviesService.class),
@@ -195,11 +183,9 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
                 shareMoviesService = ((ShareMoviesService.ShareMoviesServiceBinder) service).getService();
                 Log.d(TAG, "onServiceConnected: ");
 
-                // update list here
+                // updating list
                 updatedList();
                 Log.d(TAG,"Size of movie list: " + movieList.size());
-                //currentGroup.setText(shareMoviesService.getcurrentGroupID());
-
             }
 
             @Override
@@ -238,7 +224,6 @@ public class GroupListActivity extends AppCompatActivity implements Adapter.OnMo
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_DETAILSACTIVITY) {
             if (resultCode == RESULT_OK) {
-                //setResult(RESULT_OK, data);
                 adapter.notifyDataSetChanged();
             }
         }

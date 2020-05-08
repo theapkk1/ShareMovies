@@ -28,7 +28,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
     private OnMovieListener _onMovieListener;
     private List<Movie> _movieList;
     private Movie movie;
-    String currentDateTimeString = java.text.DateFormat.getDateTimeInstance().format(new Date());
     String date = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
     public Adapter(Context context, List<Movie> movieList, OnMovieListener onMovieListener){

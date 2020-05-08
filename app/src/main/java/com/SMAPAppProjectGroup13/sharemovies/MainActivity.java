@@ -46,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUESTCODE_SIGN_IN = 1000;
     private static final int REQUESTCODE_create_new_user = 1001;
     private static final String LOG = MainActivity.class.getSimpleName();
-   // ImageView im = findViewById(R.id.imageV_Main);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        startShareMoviesService(); // is used to bind user to the grouplist
+        startShareMoviesService();
     }
 
     private void FirebaseLogin() {
@@ -73,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startShareMoviesService() {
-        // start service
+        // Starts service
         Intent shareMoviesServiceIntent = new Intent(MainActivity.this, ShareMoviesService.class);
         startService(shareMoviesServiceIntent);
     }
@@ -83,8 +81,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onStart: ");
 
-
-        // here should the broadcast receiver be registered
+        // Broadcast receiver registered
         IntentFilter filter = new IntentFilter();
         filter.addAction(ShareMoviesService.BROADCAST_SHAREMOVIES_SERVICE_RESULT_Main);
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,filter);
@@ -108,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
     public void onStop(){
         super.onStop();
         Log.d(TAG, "onStop: ");
-
     }
 
     private void unbindShareMoviesService() {
@@ -117,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             bound = false;
         }
     }
-
 
     private void bindToShareMoviewService() {
         bindService(new Intent(MainActivity.this, ShareMoviesService.class),
@@ -144,10 +139,7 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-
-
-
-    //tjekker om vi får requestCode tilbage
+    //Executes different actions depending on the returned result code
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -163,16 +155,12 @@ public class MainActivity extends AppCompatActivity {
 
                 ((TextView)findViewById(R.id.userId)).setText(user.getUid());
 
-                // sender userUid med i metoden
+                // Sends the userUid to service
                 shareMoviesService.checkUser(user.getUid());
-
-
-
             } else
             {
                 Log.d(LOG, response.getError().getMessage());
             }
-
         }
         Log.d(TAG, "onActivityResult: her skal jeg ikke være");
     }
@@ -182,13 +170,10 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG,"Broadcast received from background service, groupID");
 
-            //Når der er hentet et groupID for brugeren
+            // Executes when the groupID is received
             Intent GroupIntent = new Intent(MainActivity.this, GroupListActivity.class);
-            //intent.putExtra("gruopID", user_.getGroupID());
             startActivity(GroupIntent);
             finish();
-
         }
     };
-
 }
