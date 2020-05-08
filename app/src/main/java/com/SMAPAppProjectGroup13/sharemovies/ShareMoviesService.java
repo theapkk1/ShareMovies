@@ -276,6 +276,7 @@ public class ShareMoviesService extends Service {
     public void addMovie(String movie) {
         try {
             sendRequest(movie);
+            Toast.makeText(this, movie + " " + getString(R.string.added_to_list),Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.invalid_search_try_again), Toast.LENGTH_SHORT).show();
         }

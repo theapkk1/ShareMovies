@@ -35,4 +35,5 @@
     <string name="button_newGroup">Add new group</string>
     <string name="enter_new_group">Please add a group</string>
     <string name="currentGroupID">Current group:</string>
+    <string name="added_to_list">added to list</string>
 </resources>
